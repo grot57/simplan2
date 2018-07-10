@@ -4,14 +4,14 @@ import Draggable from 'react-draggable';
 class Lane extends Component {
 
     render() {
-        let {name, id, tasks} = this.props;
+        let {name, id,order, tasks, onClick} = this.props;
         tasks = tasks || [];
-        let top = id*80 +"px";
-        console.log("id",id,"top",top);
+        let top = order*80 +"px";
+        //console.log("id",id,"top",top);
         return (
             <Draggable axis="y">
                 <div style={{ top:top, position: "relative"}}>
-                    <div style={{height:"50px", lineHeight: "50px",color: "blue", position:"absolute",textAlign: "left", width: "100px",justifyContent: 'center', alignItems: 'center'}}>
+                    <div onDoubleClick={() => {this.props.onClick(id)}} style={{height:"50px", lineHeight: "50px",color: "blue", position:"absolute",textAlign: "left", width: "100px",justifyContent: 'center', alignItems: 'center'}}>
                         <span style={{cursor: "pointer", marginLeft: "10px"}}>{name}</span>
                     </div>
                     {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
