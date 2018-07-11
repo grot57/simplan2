@@ -7,16 +7,17 @@ class LaneDetails extends Component {
     initPropsData(props) {
         let data = [];
         _.forIn(props,(v,k) => {
-            data.push({property: k, value: v})
+            data.push({property: k, value: v});
         });
+        data.push({property: "", value: ""});
         return data;
     }
 
     state = this.props.lane  ? {
         propsData: this.initPropsData(this.props.lane.props),
         lane: {...this.props.lane,
-               props: {...this.props.lane.props,"___NEW":""}
-    }} : null;
+            props: {...this.props.lane.props,"___NEW":""}
+        }} : null;
 
 
 
@@ -33,7 +34,11 @@ class LaneDetails extends Component {
                 onBlur={e => {
                     const data = [...this.state.propsData];
                     data[cellInfo.index][cellInfo.column.id] = e.target.innerHTML;
-                    this.setState({ data });
+                    // add a new place holder for new prop
+                    if (data.length < 1 || _.isNil(data[data.length - 1]) || _.isNil(data[data.length - 1][cellInfo.column.id]) || data[data.length - 1][cellInfo.column.id] !== "") {
+                        data.push({property: "", value: ""});
+                    }
+                    this.setState({ propsData: data });
                 }}
                 dangerouslySetInnerHTML={{
                     __html: this.state.propsData[cellInfo.index][cellInfo.column.id]
@@ -42,33 +47,58 @@ class LaneDetails extends Component {
         );
     };
 
-    renderTable = () => {
-            const data = this.state.propsData;
-            return (
-                <div>
-                    <ReactTable
-                        showPagination = {false}
-                        minRows = {5}
-                        data={data}
-                        columns={[
-                            {
-                                Header: "Prop",
-                                accessor: "property",
-                                Cell: this.renderEditable
-                            },
-                            {
-                                Header: "Value",
-                                accessor: "value",
-                                Cell: this.renderEditable
-                            }
-                        ]}
-                        defaultPageSize={20}
-                        className="-striped -highlight"
-                    />
-                    <br />
-                </div>
-            );
+    deleteRow = (cellInfo) => {
+        const data = [...this.state.propsData];
+        if (cellInfo && data && cellInfo.index < data.length - 1) {
+            data.splice(cellInfo.index,1);
         }
+        this.setState({ propsData: data });
+    }
+
+    renderDeleteRowIcon = (cellInfo) => {
+        return (
+            <Button onClick={() => {this.deleteRow(cellInfo)}} bsStyle="link" bsSize="xsmall"><Glyphicon glyph="remove"/></Button>
+        );
+    };
+
+
+    renderTable = () => {
+        const data = this.state.propsData;
+        return (
+            <div>
+                <ReactTable
+                    showPagination = {false}
+                    minRows = {(data && data.length ? data.length + 1 : 5)}
+                    data={data}
+                    columns={[
+                        {
+                            Header: "Prop",
+                            accessor: "property",
+                            Cell: this.renderEditable
+                        },
+                        {
+                            Header: "Value",
+                            accessor: "value",
+                            Cell: this.renderEditable
+                        },
+                        {
+                            Header: "",
+                            accessor: "value",
+                            Cell: this.renderDeleteRowIcon,
+                            width: 30
+                        }
+
+                    ]}
+                    defaultPageSize={20}
+                    style={data && data.length > 10 ? {
+                        height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
+                    } : {}}
+                    className="-striped -highlight"
+                />
+                <br />
+            </div>
+        );
+    }
 
 
     render() {
@@ -86,17 +116,17 @@ class LaneDetails extends Component {
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                            <Col componentClass={ControlLabel} xs={1}>
-                                Name:
-                            </Col>
-                            <Col xs={8}>
-                                <FormControl
-                                    type="text"
-                                    value={lane.name}
-                                    placeholder="Enter new name"
-                                    onChange={this.handleChange}
-                                />
-                            </Col>
+                                <Col componentClass={ControlLabel} xs={1}>
+                                    Name:
+                                </Col>
+                                <Col xs={8}>
+                                    <FormControl
+                                        type="text"
+                                        value={lane.name}
+                                        placeholder="Enter new name"
+                                        onChange={this.handleChange}
+                                    />
+                                </Col>
                             </Row>
                             <Row>
                                 <Col xs={12}>
@@ -106,42 +136,10 @@ class LaneDetails extends Component {
 
                             </Row>
                             {_.keys(_.omit(lane,["props","name","timeline","id"])).map((k) => <p>{k + ": " + lane[k]}</p>)}
-                            <h4>Control Task's props:</h4>
-                            <table>
 
-                                <tbody>
-                                {_.keys({...lane.props}).map((k) =>
-                                    <tr>
-                                        {k === "___NEW" ?
-                                            <td>
-                                                <FormControl
-                                                    type="text"
-                                                    value={lane.props[k]}
-                                                    placeHolder={"Add"}
-                                                    onChange={this.handleChange}
-                                                />
-                                            </td> :
-                                            <td><span style={{marginRight: "30px"}}>{k}</span></td>
-                                        }
-                                        {k === "___NEW" ? "" :
-                                            <td>
-                                                <FormControl
-                                                    type="text"
-                                                    value={lane.props[k]}
-                                                    onChange={this.handleChange}
-                                                />
-                                            </td>
-                                        }
-                                        {k === "___NEW" ? "" : <td><Button bsStyle="link" bsSize="xsmall"><Glyphicon glyph="remove" /></Button></td>}
-                                    </tr>
-                                )}
-                                {/*<tr>*/}
-                                    {/*<Button onClick = {this.addTaskProp} bsStyle="link" bsSize="xsmall"><Glyphicon glyph="plus" /></Button>*/}
-                                {/*</tr>*/}
-                                </tbody>
-                            </table >
                         </FormGroup>
                         <FormGroup>
+                            <ControlLabel>Controlled Task's props:</ControlLabel>
                             {this.renderTable()}
                         </FormGroup>
                     </form>
