@@ -2,14 +2,26 @@
   text-align: center;
 }
 
+.Lane-name {
+  height:50px;
+  line-height: 50px;
+  color: blue;
+  position: absolute;
+  text-align: left;
+  width: 200px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 10px;
+}
 .App-logo {
   animation: App-logo-spin infinite 10s linear;
-  height: 80px;
+  height: 40px;
 }
 
 .App-header {
   background-color: #222;
-  height: 150px;
+  height: 130px;
   padding: 20px;
   color: white;
 }

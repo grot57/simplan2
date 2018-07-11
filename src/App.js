@@ -5,12 +5,24 @@ import Task from './Task';
 import Lane from './Lane';
 import TaskStore from './TaskStore';
 import LaneDetails from "./LaneDetails";
-import _ from "lodash";
-
+import {Button, Glyphicon} from 'react-bootstrap'
+    ;import _ from "lodash";
+import uuid from 'uuid/v4';
 const store = new TaskStore();
 function init() {
     store.createLane({name:"backlogg", timeline: false, props: {category: "backlog"}});
     store.createTask({name: "firstTask",length:5,start: 0, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 5, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 10, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 16, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 20, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 25, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 30, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 40, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 50, category: "backlog"});
+    store.createTask({name: "firstTask",length:5,start: 60, category: "backlog"});
+
+
     [{start:1, length: 2, name: "T1"},{start:3,name:"T2"}].forEach((t) => {store.createTask(t)});
 }
 
@@ -24,11 +36,12 @@ class App extends Component {
         laneDetails: null,
     }
 
-    renderLaneDetails = () => {
+    renderLaneDetails = (lane) => {
         return (
             (_.isNil(this.state.laneDetails)) ? null :
                 <LaneDetails
-                    lane={store.getLaneById(this.state.laneDetails)}
+                    //lane={store.getLaneById(this.state.laneDetails)}
+                    lane={this.state.laneDetails}
                     onCancel={() => {
                         this.setState({laneDetails: null});
                     }}
@@ -57,24 +70,36 @@ class App extends Component {
                     <img src={logo} className="App-logo" alt="logo" />
                     <h1 className="App-title">Welcome to Simplan</h1>
                 </header>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.jsx</code> and save to reload.
-                </p>
-                <div style={{display: "block"}} >
-                    <Task name={"task1"} start={this.state.count}/>
-                    <Task name={"task2"} start={this.state.count+7}/>
-                </div>
+
+                {/*<div style={{display: "block"}} >*/}
+                    {/*<Task name={"task1"} start={this.state.count}/>*/}
+                    {/*<Task name={"task2"} start={this.state.count+7}/>*/}
+                {/*</div>*/}
                 <div style={{display: "block"}} >
                     {store.getAllLanes().map((l,laneOrder) => {
                         let tasks = store.getTasksByLane(l.id);
-                        return <Lane key={l.id} id={l.id} order={laneOrder+1} name={l.name} tasks={tasks} onClick={(laneId) => {
-                            console.log("click",laneId);
-
-                            this.setState({laneDetails: laneId})
-
-                        }}/>
+                        return <Lane key={l.id}
+                                     id={l.id}
+                                     order={laneOrder}
+                                     name={l.name}
+                                     tasks={tasks}
+                                     onClick={(laneId) => {
+                                         console.log("click",laneId);
+                                         this.setState({laneDetails: l})
+                                     }}
+                                     onDrag={(e) => {console.log(e.y);}}
+                        />
                     })}
+
+                    <div style={{ top:store.getAllLanes().length*80, position: "relative"}}>
+                        <div className="Lane-name">
+                            <Button onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
+                                    bsStyle="link"
+                                    title={"Add Lane"}><Glyphicon glyph="plus" /></Button>
+                        </div>
+                    </div>
                 </div>
+
                 {this.renderLaneDetails()}
             </div>
         );

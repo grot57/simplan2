@@ -10,10 +10,10 @@ class Lane extends Component {
         let top = order*80 +"px";
         //console.log("id",id,"top",top);
         return (
-            <Draggable axis="y">
+            <Draggable axis="y" onDrag={this.props.onDrag}>
                 <div style={{ top:top, position: "relative"}}>
-                    <div onDoubleClick={() => {this.props.onClick(id)}} style={{height:"50px", lineHeight: "50px",color: "blue", position:"absolute",textAlign: "left", width: "100px",justifyContent: 'center', alignItems: 'center'}}>
-                        <span style={{cursor: "pointer", marginLeft: "10px"}}>{name}</span>
+                    <div onDoubleClick={() => {this.props.onClick(id)}} className="Lane-name" >
+                        <span style={{}}>{name}</span>
                     </div>
                     {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
                     <div onMouseDown={e => e.stopPropagation()} style={{ left:"100px", position: "relative"}}>
