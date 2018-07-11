@@ -6,14 +6,19 @@
   height:50px;
   line-height: 50px;
   color: blue;
-  position: absolute;
+  /*position: absolute;*/
   text-align: left;
-  width: 200px;
+
   justify-content: center;
   align-items: center;
   cursor: pointer;
   padding-left: 10px;
+  transition: "left 0.2s ease-in-out 0, top 0.2s ease-in-out 0";
 }
+.Transition {
+  ransition: "y 1.2s ease-in-out";
+}
+
 .App-logo {
   animation: App-logo-spin infinite 10s linear;
   height: 40px;

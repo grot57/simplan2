@@ -4,9 +4,6 @@ import {
 } from 'react-bootstrap';
 import _ from 'lodash';
 
-import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
-
 /**
  * Helper class to limit re-render of components when editing title.
  * Rendered as a simple text while not focused / mouse over.
