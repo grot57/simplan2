@@ -1,6 +1,6 @@
 
 import _ from 'lodash';
-
+import uuid from 'uuid/v4';
 
 const defaultTask = {
     name: "undefined",
@@ -32,11 +32,27 @@ class TaskStore {
     getLaneById(laneId) {
         return _.find(this.lanes,{id: laneId});
     }
+
+    setLane(lane) {
+        // based on lane id, either update exiting lane, or add anew one
+        let idx = _.findIndex(this.lanes,{id:lane.id});
+        if (idx < 0) {
+            // new lane
+            if (_.isNil(lane.id)) {
+                lane.id = uuid();
+            }
+            this.lanes.push(lane)
+            return
+        } else {
+            // modify existing lane
+            this.lanes[idx] = lane;
+        }
+    }
     createTask(task) {
         let newTask = {
             ...defaultTask,
             ...task,
-            id: _.uniqueId()
+            id: uuid()
         }
         this.tasks.push({
             ...newTask
@@ -47,7 +63,7 @@ class TaskStore {
         let newLane = {
             ...defaultLane,
             ...lane,
-            id: _.uniqueId()
+            id: uuid()
         }
         this.lanes.push({
             ...newLane

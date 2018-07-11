@@ -2,8 +2,22 @@ import React, { Component } from 'react';
 import {Modal,Table, FormGroup,ControlLabel,FormControl,Col,Row,Checkbox,Button,Glyphicon } from 'react-bootstrap';
 import ReactTable from 'react-table';
 import _ from 'lodash';
+import EdtableLabel from './EditableLabel';
+import uuid from 'uuid/v4';
 
 class LaneDetails extends Component {
+    help = {
+        timeline:
+            `Timeline lanes control the life cycle of a task.
+Moving and changing a task on atimeline will change task;s properties such as: start-date, end-date, wip, completed, assignee, etc.
+A task can only be assigned to a single timeline at a time.`,
+
+        contolledProps:
+            `Controlled propoerties define the relations between a lane and its tasks.
+A task belongs to a lane if its properties are maching the ones defined as controlled-properties in that lane.
+When a task is assigned to a lane, it will automatically get the lanes props.`
+    };
+
     initPropsData(props) {
         let data = [];
         _.forIn(props,(v,k) => {
@@ -13,11 +27,11 @@ class LaneDetails extends Component {
         return data;
     }
 
-    state = this.props.lane  ? {
-        propsData: this.initPropsData(this.props.lane.props),
-        lane: {...this.props.lane,
-            props: {...this.props.lane.props,"___NEW":""}
-        }} : null;
+    state = {
+        propsData: this.initPropsData(this.props.lane ? this.props.lane.props: null),
+        lane: {...this.props.lane},
+        isDup: false,
+    }
 
 
 
@@ -101,13 +115,32 @@ class LaneDetails extends Component {
     }
 
 
+    onOk = () => {
+        let lane = {...this.state.lane};
+        let props = this.state.propsData;
+        lane.props = this.state.propsData.reduce( (props,o) => {
+            if (_.isNil(o.property) || _.isEmpty(o.property) ) {
+                return props;
+            }
+            props[o.property] = o.value;
+            return props;
+        },{});
+        return this.props.onOk && this.props.onOk(lane)
+    }
     render() {
-        let {onHide} = this.props;
+        let {onCancel, onOk} = this.props;
         let {lane} = this.state;
         return (
             <Modal show={!_.isEmpty(lane)} onHide={this.props.onHide}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{"Lane: " + lane.name} </Modal.Title>
+                <Modal.Header>
+                    <Modal.Title>
+                        <Col xs={8}>
+                            <EdtableLabel style={{fontSize: "18px", display: "inline-block"}}
+                                          value={this.state.lane.name}
+                                          onChange= {(value) => { this.setState({lane: {...this.state.lane,name: value}})}}
+                            />
+                        </Col>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>
@@ -116,38 +149,34 @@ class LaneDetails extends Component {
                         </FormGroup>
                         <FormGroup>
                             <Row>
-                                <Col componentClass={ControlLabel} xs={1}>
-                                    Name:
-                                </Col>
-                                <Col xs={8}>
-                                    <FormControl
-                                        type="text"
-                                        value={lane.name}
-                                        placeholder="Enter new name"
-                                        onChange={this.handleChange}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row>
                                 <Col xs={12}>
-                                    <Checkbox title={"Timelines lanes control the life cycle of a task, including attributes such as: \nstart-date, end-date, wip, completed, assignee  "}>Is timeline</Checkbox>
+                                    <Checkbox title={this.help.timeline}>Is timeline <Glyphicon glyph="question-sign" /></Checkbox>
                                 </Col>
 
 
                             </Row>
                             {_.keys(_.omit(lane,["props","name","timeline","id"])).map((k) => <p>{k + ": " + lane[k]}</p>)}
-
                         </FormGroup>
                         <FormGroup>
-                            <ControlLabel>Controlled Task's props:</ControlLabel>
+                            <ControlLabel title={this.help.contolledProps}>Controlled Task's props: <Glyphicon glyph="question-sign" /></ControlLabel>
                             {this.renderTable()}
                         </FormGroup>
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
                     <div style={{textAlign: "left"}}>{"id: " + lane.id}</div>
-                    <Button bsStyle="primary"><Glyphicon glyph="remove" />  Save</Button>
-                    <Button bsStyle="primary"><Glyphicon glyph="remove" />Cancel</Button>
+                    {this.state.isDup ? "" :
+                        <Button onClick={() => {
+                            lane.id = uuid();
+                            this.setState({lane,isDup:true});
+                        }}
+                                bsStyle = "primary"> <Glyphicon glyph = "share" /> Duplicate </Button>
+                    }
+
+                    <Button onClick={() => this.props.onCancel && this.props.onCancel() }
+                            bsStyle="primary"><Glyphicon glyph="remove" /> Cancel</Button>
+                    <Button onClick={this.onOk}
+                            bsStyle="primary"><Glyphicon glyph="ok" /> OK</Button>
                 </Modal.Footer>
             </Modal>
 

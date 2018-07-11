@@ -23,6 +23,25 @@ class App extends Component {
         count: 0,
         laneDetails: null,
     }
+
+    renderLaneDetails = () => {
+        return (
+            (_.isNil(this.state.laneDetails)) ? null :
+                <LaneDetails
+                    lane={store.getLaneById(this.state.laneDetails)}
+                    onCancel={() => {
+                        this.setState({laneDetails: null});
+                    }}
+                    onOk={(lane) => {
+                        store.setLane(lane);
+                        this.setState({}); // force rendering
+                        this.setState({laneDetails: null});
+                    }}
+
+                />
+        )
+    }
+
     render() {
         setTimeout(() => {
             let c = this.state.count;
@@ -56,9 +75,7 @@ class App extends Component {
                         }}/>
                     })}
                 </div>
-                {(_.isNil(this.state.laneDetails)) ? null : <LaneDetails lane={store.getLaneById(this.state.laneDetails)} onHide={() => {
-                    this.setState({laneDetails: null});
-                }} />}
+                {this.renderLaneDetails()}
             </div>
         );
     }
