@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Task from './Task';
 import Draggable from 'react-draggable';
+
 class Lane extends Component {
 
     render() {
