@@ -26,3 +26,4 @@ yarn-error.log*
 .idea/simplan.iml
 .idea/vcs.xml
 .idea/workspace.xml
+.idea
