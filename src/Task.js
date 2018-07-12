@@ -9,6 +9,7 @@ class Task extends Component {
         length: 5,
         color: "white",
         background: "blue",
+        isDragged: false,
 
     };
 
@@ -25,7 +26,7 @@ class Task extends Component {
         alignItems: 'center',
         position: "absolute",
         border: "3px solid grey",
-        transition: "left 0.2s ease-in-out, top 0.5s ease-in-out"
+        transition: "left 0.2s ease-in-out, top 0.5s ease-in-out",
     };
     render() {
         let {name,background,color,length,start,tick,pxPerTick,idx} = this.props;
@@ -41,14 +42,21 @@ class Task extends Component {
             background: this.props.background || this.style.background,
             color: this.props.color || this.style.color,
             left,
+            top: "0px",
             zIndex: idx
 
         }
+        if (this.state.isDragged) {
+            divStyle= {...divStyle, zIndex:9999}
+        }
+        console.log(divStyle.zIndex);
         return (
-            <Draggable>
+            <Draggable onStart={() => this.setState({isDragged: true})}
+                       onStop={() => this.setState({isDragged: false})}>
                     <div style={divStyle}>
                         <span style={{marginLeft: "10px"}}>{name}</span>
                     </div>
+
             </Draggable>
 
         );

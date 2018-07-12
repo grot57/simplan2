@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+
 import Task from './Task';
-import Lane from './Lane';
-import Lanes from './Lanes';
 import TaskStore from './TaskStore';
 import LaneDetails from "./LaneDetails";
-import {Button, Glyphicon} from 'react-bootstrap'
-    ;import _ from "lodash";
+import {Button, Glyphicon} from 'react-bootstrap';
+import _ from "lodash";
 import uuid from 'uuid/v4';
+
+
+import Lanes from './Lanes2';
+
 const store = new TaskStore();
+
+
+
 function init() {
     store.createLane({name:"backlogg", timeline: false, props: {category: "backlog"}});
     store.createTask({name: "firstTask",length:5,start: 0, category: "backlog"});
@@ -76,12 +82,6 @@ class App extends Component {
                 {/*<Task name={"task1"} start={this.state.count}/>*/}
                 {/*<Task name={"task2"} start={this.state.count+7}/>*/}
                 {/*</div>*/}
-                <Lanes store={store}
-                       lanes={store.getAllLanes()}
-                       onClick = {(l) => {
-                           this.setState({laneDetails: l})
-                       }}
-                />
                 <div >
                     <div className="Lane-name">
                         <Button onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
@@ -89,6 +89,13 @@ class App extends Component {
                                 title={"Add Lane"}><Glyphicon glyph="plus" /></Button>
                     </div>
                 </div>
+                <Lanes store={store}
+                       lanes={store.getAllLanes()}
+                       onClick = {(l) => {
+                           this.setState({laneDetails: l})
+                       }}
+                />
+
                 {this.renderLaneDetails()}
             </div>
         );
