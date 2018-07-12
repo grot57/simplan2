@@ -29,7 +29,8 @@ class Task extends Component {
         transition: "left 0.2s ease-in-out, top 0.5s ease-in-out",
     };
     render() {
-        let {name,background,color,length,start,tick,pxPerTick,idx} = this.props;
+        let {task,tick,pxPerTick,idx,onClick} = this.props;
+        let {name,length,start} = task
         tick = tick || 1;
         pxPerTick = pxPerTick || 50;
         name = name || this.state.name;
@@ -51,9 +52,19 @@ class Task extends Component {
         }
 
         return (
-            <Draggable onStart={() => this.setState({isDragged: true})}
-                       onStop={() => this.setState({isDragged: false})}>
-                    <div style={divStyle}>
+            <Draggable
+                onStart={(e) => {
+                    this.setState({isDragged: true})
+                }}
+                onStop={
+                    (e) => this.setState({isDragged: false}
+                )}
+            >
+                <div onDoubleClick={(e) => {
+                    console.log("click",task);
+                    if (onClick) onClick(this.props.task)
+                         }}
+                         style={divStyle}>
                         <span style={{marginLeft: "10px"}}>{name}</span>
                     </div>
 

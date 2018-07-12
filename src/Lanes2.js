@@ -10,8 +10,10 @@ import {LANE_HEIGHT} from "./Constants";
 import _ from 'lodash';
 
 
+const DragHandle = SortableHandle(() => <Glyphicon glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10}}/>);
+
 const SortableItem = SortableElement(({value}) => {
-    let {lane,tasks,onClick} = value;
+    let {lane,tasks,onClick,onTaskClick} = value;
     return (
             <div>
                 <Lane key={lane.id}
@@ -22,15 +24,12 @@ const SortableItem = SortableElement(({value}) => {
                       onClick={() => {
                           onClick && onClick(lane)
                       }}
+                      onTaskClick={onTaskClick}
                 />
             </div>
 
     );
 });
-
-
-
-const DragHandle = SortableHandle(() => <Glyphicon glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10}}/>);
 
 class VirtualList extends Component {
     render() {
@@ -57,26 +56,25 @@ const SortableList = SortableContainer(VirtualList, {withRef: true});
 
 class Lanes extends Component {
 
-    state = {
-        lanes: this.props.lanes
-    };
-
     render() {
-        let {lanes,store,onClick} = this.props;
+        let {lanes,store,onClick,onTaskClick,onReorder} = this.props;
         //lanes = this.reorderLanes(lanes);
         //console.log(lanes)
-        let lanesComps = lanes.map((lane) => {
+        let laneItems = lanes.map((lane) => {
                 let tasks = store.getTasksByLane(lane.id);
-                return {value: {lane,tasks}, height: 89}
+                return {value: {lane,tasks,onClick,onTaskClick}, height: 89}
             }
         );
         return (
             <SortableList
-
                 ref={(instance) => {this.SortableList = instance;}}
-                items={lanesComps}
+                items={laneItems}
                 useDragHandle={true}
-                useWindowAsScrollContainer={true}/>
+                useWindowAsScrollContainer={true}
+                onSortEnd = {({oldIndex, newIndex}) => {
+                    onReorder && onReorder(oldIndex, newIndex);
+                }}
+                />
         );
     }
 }

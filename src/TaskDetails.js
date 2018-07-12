@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import {Modal,Table, FormGroup,ControlLabel,FormControl,Col,Row,Checkbox,Button,Glyphicon } from 'react-bootstrap';
+import {Modal,Table, FormGroup,Radio,ControlLabel,FormControl,Col,Row,Checkbox,Button,Glyphicon } from 'react-bootstrap';
 import ReactTable from 'react-table';
 import _ from 'lodash';
 import EdtableLabel from './EditableLabel';
 import uuid from 'uuid/v4';
 
-class LaneDetails extends Component {
+
+const TASK_PROPS = ["name","summary","details","type","priority","discussion","priority","id"]
+
+class TaskDetails extends Component {
     help = {
         timeline:
             `Timeline lanes control the life cycle of a task.
@@ -15,9 +18,14 @@ A task can only be assigned to a single timeline at a time.`,
         contolledProps:
             `Controlled propoerties define the relations between a lane and its tasks.
 A task belongs to a lane if its properties are maching the ones defined as controlled-properties in that lane.
-When a task is assigned to a lane, it will automatically get the lanes props.`
+When a task is assigned to a lane, it will automatically get the lanes props.`,
+        props:
+        `You can add any number of properties( <key>,<value> pairs) to a task. 
+Those props can later be used by Lanes (controlled-props) to figure out which tasks are part of which lanes.`
     };
 
+    // translate object props like {k1:v1, k2:v2} into [{property:k1,value:v1},{property:k2,value:v2}]
+    // this is needed for the react-table below.
     initPropsData(props) {
         let data = [];
         _.forIn(props,(v,k) => {
@@ -28,17 +36,12 @@ When a task is assigned to a lane, it will automatically get the lanes props.`
     }
 
     state = {
-        propsData: this.initPropsData(this.props.lane ? this.props.lane.props: null),
-        lane: {...this.props.lane},
+        propsData: this.initPropsData(_.omit(this.props.task,TASK_PROPS)),
+        task: {...this.props.task},
         isDup: false,
     }
 
-
-
-    setTaskProp() {
-
-    };
-
+    // for react table below
     renderEditable = (cellInfo) => {
         return (
             <div
@@ -116,28 +119,34 @@ When a task is assigned to a lane, it will automatically get the lanes props.`
 
 
     onOk = () => {
-        let lane = {...this.state.lane};
+        let task = {...this.state.task};
         let props = this.state.propsData;
-        lane.props = this.state.propsData.reduce( (props,o) => {
+        let additionalProps = this.state.propsData.reduce( (props,o) => {
             if (_.isNil(o.property) || _.isEmpty(o.property) ) {
                 return props;
             }
             props[o.property] = o.value;
             return props;
         },{});
-        return this.props.onOk && this.props.onOk(lane)
+        task = {...task,...additionalProps};
+        return this.props.onOk && this.props.onOk(task)
+    }
+
+    setTaskAttr = (attr,value) => {
+        this.setState(
+            {task: {...this.state.task,[attr]: value}}
+        );
     }
     render() {
-        let {onCancel, onOk} = this.props;
-        let {lane} = this.state;
+        let {task} = this.state;
         return (
-            <Modal show={!_.isEmpty(lane)} onHide={this.props.onHide}>
+            <Modal show={!_.isEmpty(task)} onHide={this.props.onHide}>
                 <Modal.Header>
                     <Modal.Title>
                         <Col xs={8}>
                             <EdtableLabel style={{fontSize: "18px", display: "inline-block"}}
-                                          value={this.state.lane.name}
-                                          onChange= {(value) => { this.setState({lane: {...this.state.lane,name: value}})}}
+                                          value={this.state.task.name}
+                                          onChange= {(v) => this.setTaskAttr("name",v)}
                             />
                         </Col>
                     </Modal.Title>
@@ -145,30 +154,81 @@ When a task is assigned to a lane, it will automatically get the lanes props.`
                 <Modal.Body>
                     <form>
                         <FormGroup>
-                            <ControlLabel>Lane attributes:</ControlLabel>
-                        </FormGroup>
-                        <FormGroup>
+                            <ControlLabel>Task attributes:</ControlLabel>
                             <Row>
                                 <Col xs={12}>
-                                    <Checkbox title={this.help.timeline}>Is timeline <Glyphicon glyph="question-sign" /></Checkbox>
+                                    <Checkbox >Is done</Checkbox>
                                 </Col>
-
-
                             </Row>
-                            {_.keys(_.omit(lane,["props","name","timeline","id"])).map((k) => <p>{k + ": " + lane[k]}</p>)}
+                            <Row>
+                                <Col xs={12}>
+                                    <ControlLabel>Details </ControlLabel>
+                                    <FormControl style={{height:200}} componentClass="textarea" placeholder="enter some details..." />
+                                </Col>
+                            </Row>
                         </FormGroup>
                         <FormGroup>
-                            <ControlLabel title={this.help.contolledProps}>Controlled Task's props: <Glyphicon glyph="question-sign" /></ControlLabel>
+                            <ControlLabel>Type</ControlLabel>
+                            <Row>
+                                <Col xs={12}>
+                                <Radio name="typeGroup"
+                                       checked={this.state.task.type==="bug"}
+                                       inline
+                                       onChange = {(e) => this.setTaskAttr("type","bug")}>
+                                    Bug
+                                </Radio>{' '}
+                                <Radio name="typeGroup"
+                                       checked={this.state.task.type==="enhancement"}
+                                       inline
+                                       onChange = {(e) => this.setTaskAttr("type","enhancement")}>
+                                    Enhancement
+                                </Radio>{' '}
+                                <Radio name="typeGroup"
+                                       checked={this.state.task.type==="task"}
+                                       inline
+                                       onChange = {(e) => this.setTaskAttr("type","task")}>
+                                    Task
+                                </Radio>
+                                </Col>
+                            </Row>
+                        </FormGroup>
+                        <FormGroup>
+                            <ControlLabel>Priority</ControlLabel>
+                            <Row>
+                                <Col xs={12}>
+                                    <Radio name="prioGroup"
+                                           checked={this.state.task.priority==="high"}
+                                           inline
+                                           onChange = {(e) => this.setTaskAttr("priority","high")}>
+                                        High
+                                    </Radio>{' '}
+                                    <Radio name="prioGroup"
+                                           checked={this.state.task.priority==="medium"}
+                                           inline
+                                           onChange = {(e) => this.setTaskAttr("priority","medium")}>
+                                        Medium
+                                    </Radio>{' '}
+                                    <Radio name="prioGroup"
+                                           checked={this.state.task.priority==="low"}
+                                           inline
+                                           onChange = {(e) => this.setTaskAttr("priority","low")}>
+                                        Low
+                                    </Radio>
+                                </Col>
+                            </Row>
+                        </FormGroup>
+                        <FormGroup>
+                            <ControlLabel title={this.help.props}>Task's props: <Glyphicon glyph="question-sign" /></ControlLabel>
                             {this.renderTable()}
                         </FormGroup>
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <div style={{textAlign: "left"}}>{"id: " + lane.id}</div>
+                    <div style={{textAlign: "left"}}>{"id: " + task.id}</div>
                     {this.state.isDup ? "" :
                         <Button onClick={() => {
-                                    lane.id = uuid();
-                                    this.setState({lane,isDup:true});
+                                    task.id = uuid();
+                                    this.setState({task,isDup:true});
                                 }}
                                 bsStyle = "primary"> <Glyphicon glyph = "share" /> Duplicate </Button>
                     }
@@ -184,4 +244,4 @@ When a task is assigned to a lane, it will automatically get the lanes props.`
     }
 }
 
-export default LaneDetails;
+export default TaskDetails;
