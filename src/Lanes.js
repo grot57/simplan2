@@ -21,7 +21,7 @@ class Lanes extends Component {
                 }
             })
         }
-        console.log("move",moveDown);
+        //console.log("move",moveDown);
     };
     onDragStop = (laneId,x,y) => {
         // this.setState({
@@ -41,14 +41,14 @@ class Lanes extends Component {
         let newLanes =  [...lanes];
         newLanes.splice(sourceIdx,1);
         newLanes.splice(newIdx,0,sourceLane);
-        console.log("Reorder:",lanes,newLanes)
+        //console.log("Reorder:",lanes,newLanes)
         return newLanes;
     }
 
     render() {
         let {lanes,store,onClick} = this.props;
         lanes = this.reorderLanes(lanes);
-        console.log(lanes)
+        //console.log(lanes)
         return (
             <div>
                 {lanes.map((l,laneOrder) => {

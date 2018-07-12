@@ -49,7 +49,7 @@ class Task extends Component {
         if (this.state.isDragged) {
             divStyle= {...divStyle, zIndex:9999}
         }
-        console.log(divStyle.zIndex);
+
         return (
             <Draggable onStart={() => this.setState({isDragged: true})}
                        onStop={() => this.setState({isDragged: false})}>

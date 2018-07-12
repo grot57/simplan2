@@ -47,7 +47,7 @@ class VirtualList extends Component {
                     }}
                     rowCount={items.length}
                     width={window.innerWidth}
-                    height={300}
+                    height={window.innerHeight - 200}
                 />
         );
     }
