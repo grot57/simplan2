@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
-
+import {LANE_HEIGHT} from './Constants';
 
 class Task extends Component {
     state = {
@@ -10,14 +10,18 @@ class Task extends Component {
         color: "white",
         background: "blue",
         isDragged: false,
+        dragStartPosition: {x:0, y:0},
 
     };
+
+    dragPositon: {x:0, y:0}
 
     style = {
         borderRadius: "10px",
         background:"blue",
-        height: "50px",
-        lineHeight: "50px",
+        height: LANE_HEIGHT + "px" ,
+        lineHeight: LANE_HEIGHT + "px",
+        fontSize: "12px",
         width: "100px",
         color: "white",
         textAlign: "left",
@@ -32,7 +36,7 @@ class Task extends Component {
         let {task,tick,pxPerTick,idx,onClick} = this.props;
         let {name,length,start} = task
         tick = tick || 1;
-        pxPerTick = pxPerTick || 50;
+        pxPerTick = pxPerTick || 40;
         name = name || this.state.name;
         length = length || this.state.length;
         let width = (length / tick * pxPerTick - 6) + "px";
@@ -45,28 +49,31 @@ class Task extends Component {
             left,
             top: "0px",
             zIndex: idx
-
         }
         if (this.state.isDragged) {
-            divStyle= {...divStyle, zIndex:9999}
+            divStyle= {...divStyle, zIndex:9999,opacity: 0.5}
         }
 
         return (
             <Draggable
+                position={this.state.dragStartPosition}
                 onStart={(e) => {
                     this.setState({isDragged: true})
                 }}
                 onStop={
                     (e) => this.setState({isDragged: false}
                 )}
+                onDrag={
+                    (e,h,k) => console.log("drag: ",h,k,e)
+                    }
             >
                 <div onDoubleClick={(e) => {
                     console.log("click",task);
                     if (onClick) onClick(this.props.task)
-                         }}
-                         style={divStyle}>
-                        <span style={{marginLeft: "10px"}}>{name}</span>
-                    </div>
+                }}
+                     style={divStyle}>
+                    <span style={{marginLeft: "10px"}}>{name}</span>
+                </div>
 
             </Draggable>
 

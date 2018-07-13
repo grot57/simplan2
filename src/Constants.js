@@ -1,3 +1,3 @@
 
 
-export let LANE_HEIGHT = 50;
+export let LANE_HEIGHT = 40;

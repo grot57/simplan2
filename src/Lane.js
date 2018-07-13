@@ -13,7 +13,7 @@ class Lane extends Component {
 
         //console.log("id",id,"top",top);
         return (
-                <div onMouseDown={e => e.stopPropagation()} style={{display: "bloxk", position: "relative"}}>
+                <div onMouseDown={e => e.stopPropagation()} style={{marginTop: "5px", display: "block", position: "relative"}}>
                     <Row>
                     <Col xs={2}>
                         <div onClick={() => {onClick(id)}} className="Lane-name" >
@@ -23,7 +23,7 @@ class Lane extends Component {
                     </Col>
                     <Col xs={10}>
                         {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
-                        <div onMouseDown={e => e.stopPropagation()} style={{ left:"100px", position: "relative"}}>
+                        <div onMouseDown={e => e.stopPropagation()} style={{  position: "relative"}}>
                             {tasks.map((t,idx) => <Task key={idx} idx={idx} task={t} onClick={onTaskClick} />)}
                         </div>
                     </Col>

@@ -155,6 +155,19 @@ class TaskStore {
         let targetIdx = _.findIndex(this.lanes,{id: targetId});
         this.lanes.splice(targetIdx,0,sourceLane);
     }
+
+    getState() {
+        return {
+            tasks: this.tasks,
+            lanes: this.lanes,
+        };
+    }
+
+    restoreState(json) {
+        this.tasks = json.tasks;
+        this.lanes = json.lanes;
+    }
+
 };
 
 export default TaskStore;
