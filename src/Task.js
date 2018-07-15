@@ -1,6 +1,77 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import {LANE_HEIGHT} from './Constants';
+import { DragSource } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
+
+const Types = {
+    ITEM: "TASK"
+}
+
+const taskSource = {
+    beginDrag(props) {
+        return {}
+        /* code here */
+    },
+    endDrag(props) {
+        /* code here */
+    }
+}
+function collectSource(connect, monitor) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    }
+}
+
+function collectTarget(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver()
+    };
+}
+
+
+const taskTarget = {
+    drop(props, monitor) {
+        console.log("drop:",props)
+    }
+};
+
+class TaskDropTarget extends Component {
+    render() {
+        let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
+        let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
+        let {isOver,connectDropTarget} = this.props
+
+        let style = {
+            transition: "left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
+            marginLeft: "0px",
+            background: isOver ? yellowPpattern : bluePattern,
+            width: "10px",
+            zIndex: 10,
+            textAlign: "left",
+            verticalAlign: "middle",
+            justifyContent: 'center',
+            lineHeight: LANE_HEIGHT-4 + "px",
+            position: "absolute",
+            height: LANE_HEIGHT-4 + "px" ,
+            cursor: "move",
+            borderRadius: "4px",
+            opacity: "0.7",
+
+        };
+
+        return connectDropTarget(
+            <span style={style}>
+
+            </span>
+        )
+    }
+}
+
+let TaskDropTargetWrap = DropTarget(Types.ITEM, taskTarget, collectTarget)(TaskDropTarget);
+
 
 class Task extends Component {
     state = {
@@ -29,10 +100,11 @@ class Task extends Component {
         justifyContent: 'center',
         alignItems: 'center',
         position: "absolute",
-        border: "3px solid grey",
+        border: "2px solid grey",
         transition: "left 0.2s ease-in-out, top 0.5s ease-in-out",
     };
     render() {
+        const { isDragging, connectDragSource, src, isOver } = this.props;
         let {task,tick,pxPerTick,idx,onClick} = this.props;
         let {name,length,start} = task
         tick = tick || 1;
@@ -50,35 +122,21 @@ class Task extends Component {
             top: "0px",
             zIndex: idx
         }
-        if (this.state.isDragged) {
+        if (isDragging) {
             divStyle= {...divStyle, zIndex:9999,opacity: 0.5}
         }
 
-        return (
-            <Draggable
-                position={this.state.dragStartPosition}
-                onStart={(e) => {
-                    this.setState({isDragged: true})
-                }}
-                onStop={
-                    (e) => this.setState({isDragged: false}
-                )}
-                onDrag={
-                    (e,h,k) => console.log("drag: ",h,k,e)
-                    }
-            >
+        return connectDragSource(
                 <div onDoubleClick={(e) => {
                     console.log("click",task);
                     if (onClick) onClick(this.props.task)
                 }}
                      style={divStyle}>
+                    <TaskDropTargetWrap />
                     <span style={{marginLeft: "10px"}}>{name}</span>
                 </div>
-
-            </Draggable>
-
         );
     }
 }
 
-export default Task;
+export default DragSource(Types.ITEM, taskSource, collectSource)(Task);

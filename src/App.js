@@ -10,6 +10,9 @@ import {Button, Col,Row, Glyphicon} from 'react-bootstrap';
 import _ from "lodash";
 import uuid from 'uuid/v4';
 
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
+
 
 import Lanes from './Lanes2';
 
@@ -77,7 +80,9 @@ function openFile(func) {
 
 init();
 
+
 store.report();
+
 class App extends Component {
     state = {
         count: 0,
@@ -212,5 +217,5 @@ class App extends Component {
     }
 }
 
-export default App;
+export default DragDropContext(HTML5Backend)(App);
 
