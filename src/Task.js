@@ -10,8 +10,10 @@ const Types = {
 
 const taskSource = {
     beginDrag(props) {
+
+        console.log(props);
+        props.onTaskDragStart(props.task)
         return {}
-        /* code here */
     },
     endDrag(props) {
         /* code here */
@@ -20,7 +22,7 @@ const taskSource = {
 function collectSource(connect, monitor) {
     return {
         connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
+        isDragging: monitor.isDragging(),
     }
 }
 
@@ -34,11 +36,24 @@ function collectTarget(connect, monitor) {
 
 const taskTarget = {
     drop(props, monitor) {
-        console.log("drop:",props)
+        console.log("drop:",props);
+    },
+    hover(props) {
+        props.onTaskDragOver(props.task);
     }
 };
 
 class TaskDropTarget extends Component {
+    state = {
+        isOver: false
+    };
+
+    // componentWillReceiveProps = (nextProps) => {
+    //     if (nextProps.isOver === this.props.isOver) return;
+    //     if (nextProps.isOver) {
+    //         this.props.onTaskDragOver(this.props.task)
+    //     }
+    // }
     render() {
         let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
@@ -85,8 +100,6 @@ class Task extends Component {
 
     };
 
-    dragPositon: {x:0, y:0}
-
     style = {
         borderRadius: "10px",
         background:"blue",
@@ -102,16 +115,21 @@ class Task extends Component {
         position: "absolute",
         border: "2px solid grey",
         transition: "left 0.2s ease-in-out, top 0.5s ease-in-out",
+
     };
     render() {
         const { isDragging, connectDragSource, src, isOver } = this.props;
-        let {task,tick,pxPerTick,idx,onClick} = this.props;
-        let {name,length,start} = task
+        let {task,tick,pxPerTick,idx,onClick,onTaskDragStart,onTaskDragOver,onTaskDragEnd} = this.props;
+        let {name,length,start, shift} = task
         tick = tick || 1;
         pxPerTick = pxPerTick || 40;
         name = name || this.state.name;
         length = length || this.state.length;
         let width = (length / tick * pxPerTick - 6) + "px";
+        if (shift && shift > 0) {
+            console.log("SHIFTTT ", shift);
+            start += shift;
+        }
         let left = (start / tick * pxPerTick) + "px";
         let divStyle = {
             ...this.style,
@@ -128,11 +146,11 @@ class Task extends Component {
 
         return connectDragSource(
                 <div onDoubleClick={(e) => {
-                    console.log("click",task);
-                    if (onClick) onClick(this.props.task)
-                }}
+                        console.log("click",task);
+                        if (onClick) onClick(this.props.task)
+                    }}
                      style={divStyle}>
-                    <TaskDropTargetWrap />
+                    <TaskDropTargetWrap onTaskDragOver={this.props.onTaskDragOver} task={this.props.task}/>
                     <span style={{marginLeft: "10px"}}>{name}</span>
                 </div>
         );

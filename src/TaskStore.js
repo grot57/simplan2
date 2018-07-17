@@ -141,6 +141,18 @@ class TaskStore {
 
     // reorder list of lanes.
     // move source-lane to "just-before" target-lane
+    setDraggedTask(task) {
+        this.draggedTask = task;
+    }
+    setTaskDragOver(targetTask) {
+        console.log("setting shift: ", this.draggedTask)
+        targetTask.shift = this.draggedTask.length;
+        _.find(this.tasks, {id: targetTask.id}).shift = targetTask.shift;
+        targetTask.shift = this.draggedTask.length;
+    }
+
+        // reorder list of lanes.
+    // move source-lane to "just-before" target-lane
     reorderLanes(sourceId,targetId) {
 
         let sourceIdx = _.findIndex(this.lanes,{id: sourceId});

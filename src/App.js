@@ -182,9 +182,23 @@ class App extends Component {
                        onClick = {(l) => {
                            this.setState({laneDetails: l})
                        }}
+
                        onTaskClick = {(t) => {
                            this.setState({taskDetails: t})
                        }}
+                       onTaskDragStart = {(t) => {
+                           console.log("Task being dragged: ",t);
+                           store.setDraggedTask(t)
+                       }}
+                       onTaskDragOver = {(targetTask) => {
+                           console.log("Task being dragged over : ",targetTask);
+                           store.setTaskDragOver(targetTask);
+                           this.setState({});
+                       }}
+                       onTaskDragEnd = {(t) => {
+                           console.log("Task dropped: ",t)
+                       }}
+
                        onReorder ={(oldIdx, newIdx) => {
                            // note that "local" lanes, and the one at store might not be the same.
                            // beter switch to lane.id.

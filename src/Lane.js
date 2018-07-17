@@ -8,7 +8,7 @@ import {Col,Row} from 'react-bootstrap';
 class Lane extends Component {
 
     render() {
-        let {name, id, tasks, onClick, onTaskClick, dragHandle} = this.props;
+        let {name, id, tasks, onClick, onTaskClick, dragHandle,onTaskDragStart,onTaskDragOver,onTaskDragEnd} = this.props;
         tasks = tasks || [];
 
         //console.log("id",id,"top",top);
@@ -24,7 +24,16 @@ class Lane extends Component {
                     <Col xs={10}>
                         {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
                         <div onMouseDown={e => e.stopPropagation()} style={{  position: "relative"}}>
-                            {tasks.map((t,idx) => <Task key={idx} idx={idx} task={t} onClick={onTaskClick} />)}
+                            {tasks.map((t,idx) =>
+                                <Task key={idx}
+                                      idx={idx}
+                                      task={t}
+                                      onClick={onTaskClick}
+                                      onTaskDragStart={onTaskDragStart}
+                                      onTaskDragOver={onTaskDragOver}
+                                      onTaskDragEnd={onTaskDragEnd}
+
+                                />)}
                         </div>
                     </Col>
                     </Row>
