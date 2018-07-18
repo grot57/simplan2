@@ -25,9 +25,10 @@ class Lane extends Component {
                         {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
                         <div onMouseDown={e => e.stopPropagation()} style={{  position: "relative"}}>
                             {tasks.map((t,idx) =>
-                                <Task key={idx}
+                                <Task key={t.id}
                                       idx={idx}
                                       task={t}
+                                      laneId={id}
                                       onClick={onTaskClick}
                                       onTaskDragStart={onTaskDragStart}
                                       onTaskDragOver={onTaskDragOver}

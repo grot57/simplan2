@@ -186,17 +186,20 @@ class App extends Component {
                        onTaskClick = {(t) => {
                            this.setState({taskDetails: t})
                        }}
-                       onTaskDragStart = {(t) => {
-                           console.log("Task being dragged: ",t);
-                           store.setDraggedTask(t)
+                       onTaskDragStart = {(laneId,taskId) => {
+                           console.log("Task being dragged: ",taskId);
+                           store.setDraggedTask(laneId,taskId)
                        }}
-                       onTaskDragOver = {(targetTask) => {
-                           console.log("Task being dragged over : ",targetTask);
-                           store.setTaskDragOver(targetTask);
+                       onTaskDragOver = {(laneId,taskId) => {
+                           console.log("Task being dragged over : ",taskId);
+                           store.setTaskDragOver(laneId,taskId);
                            this.setState({});
                        }}
-                       onTaskDragEnd = {(t) => {
-                           console.log("Task dropped: ",t)
+                       onTaskDragEnd = {(laneId,taskId) => {
+                           if (!laneId || !taskId) return;
+                           console.log("Task dropped: ",taskId)
+                           store.setTaskDrop(laneId,taskId);
+                           this.setState({});
                        }}
 
                        onReorder ={(oldIdx, newIdx) => {

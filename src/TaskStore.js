@@ -22,6 +22,7 @@ const defaultLane = {
 class TaskStore {
     tasks = [];
     lanes = [];
+    dragInfo ={};
 
     report() {
         if (this.tasks.length === 0)
@@ -125,7 +126,35 @@ class TaskStore {
             tasks = _.filter(this.tasks, l.props);
         }
         tasks = this._reorderTasks(tasks);
+        tasks = this.calcDnDShift(laneId,tasks);
         return [...tasks]
+    }
+
+    calcDnDShift(laneId,tasks) {
+        if (!this.dragInfo.targetLaneId || this.dragInfo.targetLaneId !== laneId) {
+            return tasks;
+        }
+
+        let shift = 0;
+        let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId})
+        if (!sourceTask) {
+            return tasks;
+        }
+        let shifttedTasks = tasks.map(t => {
+            if (t.id === this.dragInfo.sourceTaskId) {
+                // task can't be twice on the same lane
+                shift -= sourceTask.length || 5;
+                return null;
+            }
+            if (t.id === this.dragInfo.targetTaskId) {
+                shift += sourceTask.length || 5;
+            }
+            return {
+                ...t,
+                start: t.start + shift
+            }
+        });
+        return _.filter(shifttedTasks,null);
     }
 
     _reorderTasks(tasks) {
@@ -141,14 +170,32 @@ class TaskStore {
 
     // reorder list of lanes.
     // move source-lane to "just-before" target-lane
-    setDraggedTask(task) {
-        this.draggedTask = task;
+    setDraggedTask(sourceLaneId, sourceTaskId) {
+        // note we reset the "target" info if exists
+        this.dragInfo = {
+            sourceLaneId,
+            sourceTaskId
+        };
     }
-    setTaskDragOver(targetTask) {
-        console.log("setting shift: ", this.draggedTask)
-        targetTask.shift = this.draggedTask.length;
-        _.find(this.tasks, {id: targetTask.id}).shift = targetTask.shift;
-        targetTask.shift = this.draggedTask.length;
+    setTaskDragOver(targetLaneId,targetTaskId) {
+        this.dragInfo = {
+            ...this.dragInfo,
+            targetLaneId,
+            targetTaskId
+        };
+    }
+
+    setTaskDrop(targetLaneId,targetTaskId) {
+        if (!this.dragInfo.sourceLaneId ||  !this.dragInfo.targetLaneId ) {
+            this.dragInfo = {};
+            return;
+        }
+        // move source-task in task-list just before the "target"
+        let sourceIdx = _.findIndex(this.tasks,{id:this.dragInfo.sourceTaskId});
+        let targetIdx = _.findIndex(this.tasks,{id:this.dragInfo.targetTaskId});
+        let sourceTask = this.tasks[sourceIdx];
+        this.tasks.splice(sourceIdx,1).splice(targetIdx,0,sourceTask);
+        this.dragInfo = {};
     }
 
         // reorder list of lanes.
@@ -178,6 +225,7 @@ class TaskStore {
     restoreState(json) {
         this.tasks = json.tasks;
         this.lanes = json.lanes;
+        this.dragInfo = {};
     }
 
 };

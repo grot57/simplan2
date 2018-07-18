@@ -10,13 +10,13 @@ const Types = {
 
 const taskSource = {
     beginDrag(props) {
-
-        console.log(props);
-        props.onTaskDragStart(props.task)
+        console.log("begin drag:",props);
+        props.onTaskDragStart(props.laneId,props.task.id);
         return {}
     },
     endDrag(props) {
         /* code here */
+        props.onTaskDragEnd();
     }
 }
 function collectSource(connect, monitor) {
@@ -26,22 +26,22 @@ function collectSource(connect, monitor) {
     }
 }
 
+const taskTarget = {
+    drop(props, monitor) {
+        console.log("drop:",props);
+        props.onTaskDragEnd(props.laneId,props.task.id);
+    },
+    hover(props) {
+        props.onTaskDragOver(props.laneId,props.task.id);
+    }
+};
+
 function collectTarget(connect, monitor) {
     return {
         connectDropTarget: connect.dropTarget(),
         isOver: monitor.isOver()
     };
 }
-
-
-const taskTarget = {
-    drop(props, monitor) {
-        console.log("drop:",props);
-    },
-    hover(props) {
-        props.onTaskDragOver(props.task);
-    }
-};
 
 class TaskDropTarget extends Component {
     state = {
@@ -119,17 +119,13 @@ class Task extends Component {
     };
     render() {
         const { isDragging, connectDragSource, src, isOver } = this.props;
-        let {task,tick,pxPerTick,idx,onClick,onTaskDragStart,onTaskDragOver,onTaskDragEnd} = this.props;
-        let {name,length,start, shift} = task
+        let {task,laneId,tick,pxPerTick,idx,onClick} = this.props;
+        let {name,length,start} = task
         tick = tick || 1;
         pxPerTick = pxPerTick || 40;
         name = name || this.state.name;
         length = length || this.state.length;
         let width = (length / tick * pxPerTick - 6) + "px";
-        if (shift && shift > 0) {
-            console.log("SHIFTTT ", shift);
-            start += shift;
-        }
         let left = (start / tick * pxPerTick) + "px";
         let divStyle = {
             ...this.style,
@@ -150,7 +146,7 @@ class Task extends Component {
                         if (onClick) onClick(this.props.task)
                     }}
                      style={divStyle}>
-                    <TaskDropTargetWrap onTaskDragOver={this.props.onTaskDragOver} task={this.props.task}/>
+                    <TaskDropTargetWrap onTaskDragEnd={this.props.onTaskDragOver} onTaskDragOver={this.props.onTaskDragOver} task={this.props.task} laneId={laneId}/>
                     <span style={{marginLeft: "10px"}}>{name}</span>
                 </div>
         );
