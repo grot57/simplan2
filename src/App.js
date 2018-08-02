@@ -129,14 +129,14 @@ class App extends Component {
     }
 
     render() {
-        setTimeout(() => {
-            let c = this.state.count;
-            c++;
-            if (c > 5) {
-                c=0;
-            }
-            this.setState({count: c});
-        },10000)
+        // setTimeout(() => {
+        //     let c = this.state.count;
+        //     c++;
+        //     if (c > 5) {
+        //         c=0;
+        //     }
+        //     this.setState({count: c});
+        // },10000)
         let lanes = store.getAllLanes();
         return (
             <div className="App">
@@ -191,9 +191,9 @@ class App extends Component {
                            store.setDraggedTask(laneId,taskId)
                            this.setState({});
                        }}
-                       onTaskDragOver = {(laneId,taskId) => {
-                           console.log("Task being dragged over : ",taskId);
-                           store.setTaskDragOver(laneId,taskId);
+                       onTaskDragOverSquare = {(laneId,position) => {
+                           //console.log("Task being dragged over square : ",laneId,position);
+                           store.setTaskDragOverSquare(laneId,position);
                            this.setState({});
                        }}
                        onTaskDragEnd = {(laneId,taskId) => {
@@ -204,7 +204,7 @@ class App extends Component {
                            store.setTaskDrop(laneId, taskId);
                            this.setState({});
                        }}
-                       isTaskDragInProgress = {store.isTaskDragInProgress()}
+                       dragInfo = {store.getDragInfo()}
 
                        onReorder ={(oldIdx, newIdx) => {
                            // note that "local" lanes, and the one at store might not be the same.

@@ -125,39 +125,73 @@ class TaskStore {
         } else {
             tasks = _.filter(this.tasks, l.props);
         }
-        tasks = this._reorderTasks(tasks);
+        tasks = this._orderTasks(tasks);
         tasks = this.calcDnDShift(laneId,tasks);
         return [...tasks]
     }
 
     calcDnDShift(laneId,tasks) {
-        if (!this.dragInfo.targetLaneId || this.dragInfo.targetLaneId !== laneId) {
+        if (!this.dragInfo.sourceLaneId || this.dragInfo.targetLaneId !== laneId) {
+            return tasks;
+        }
+        let targetPosition = this.dragInfo.targetPosition;
+        // find dragged-over task:
+        let draggedOverTask = _.filter(tasks, t => {
+            if (t.start <= targetPosition && t.start+t.length > targetPosition) {
+                return true;
+            }
+            return false;
+        });
+        if (_.isEmpty(draggedOverTask)) {
             return tasks;
         }
 
-        let shift = 0;
+        let _tasks =
+
+
+
+
+
+
         let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId})
         if (!sourceTask) {
             return tasks;
         }
-        let shifttedTasks = tasks.map(t => {
-            if (t.id === this.dragInfo.sourceTaskId) {
-                // task can't be twice on the same lane
-                shift -= sourceTask.length || 5;
-                return null;
-            }
-            if (t.id === this.dragInfo.targetTaskId) {
+
+        let shifttedTasks = [];
+        let sourceTaskPositioned =false;
+        let shift = 0;
+        tasks.forEach(t => {
+            if (t.start+shift >= this.dragInfo.tagetPostion) {
+                shifttedTasks.push({
+                    ...sourceTask,
+                    shift
+                });
                 shift += sourceTask.length || 5;
+                sourceTaskPositioned = true;
             }
-            return {
+            if (t.id === sourceTask.id) {
+                shift -= sourceTask.length || 5;
+                return;
+            }
+            shifttedTasks.push({
                 ...t,
                 shift
-            }
-        });
+            });
+        })
+        // push source task at the end if needed
+        if (!sourceTaskPositioned) {
+            shifttedTasks.push({
+                ...sourceTask,
+                shift,
+                start: nextStart
+            });
+        }
+
         return _.filter(shifttedTasks,null);
     }
 
-    _reorderTasks(tasks) {
+    _orderTasks(tasks) {
         let nextStart = 0;
         return tasks.map(t => {
             let tt = {...t};
@@ -177,6 +211,8 @@ class TaskStore {
             sourceTaskId
         };
     }
+
+    // TODO  - is this still needed?
     setTaskDragOver(targetLaneId,targetTaskId) {
         this.dragInfo = {
             ...this.dragInfo,
@@ -185,11 +221,15 @@ class TaskStore {
         };
     }
 
+    // TODO  - is this still needed?
     setTaskDrop(targetLaneId,targetTaskId) {
         if (!this.dragInfo.sourceLaneId ||  !this.dragInfo.targetLaneId ) {
             this.dragInfo = {};
             return;
         }
+        this.dragInfo = {};
+        return;
+
         // move source-task in task-list just before the "target"
         let sourceIdx = _.findIndex(this.tasks,{id:this.dragInfo.sourceTaskId});
         let targetIdx = _.findIndex(this.tasks,{id:this.dragInfo.targetTaskId});
@@ -198,13 +238,19 @@ class TaskStore {
         this.dragInfo = {};
     }
 
-    isTaskDragInProgress() {
-        let _isTaskDragInProgress = (this.dragInfo.sourceLaneId && this.dragInfo.sourceTaskId);
-        console.log("_isTaskDragInProgress",_isTaskDragInProgress);
-        return _isTaskDragInProgress;
+    setTaskDragOverSquare(targetLaneId,targetPosition) {
+        this.dragInfo = {
+            ...this.dragInfo,
+            targetLaneId,
+            targetPosition
+        };
     }
 
-        // reorder list of lanes.
+    getDragInfo() {
+        return this.dragInfo;
+    }
+
+    // reorder list of lanes.
     // move source-lane to "just-before" target-lane
     reorderLanes(sourceId,targetId) {
 

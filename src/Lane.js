@@ -17,8 +17,8 @@ const laneSquareTarget = {
         //props.onTaskDragEnd(props.laneId,props.task.id);
     },
     hover(props) {
-        console.log("hover", props.position);
-        //props.onTaskDragOver(props.laneId,props.task.id);
+        //console.log("hover", props.position);
+        props.onTaskDragOverSquare(props.laneId,props.position);
     }
 };
 
@@ -31,8 +31,8 @@ function collectTarget(connect, monitor) {
 
 class LaneSquare extends Component {
     render() {
-        let {position,isOver,connectDropTarget,isTaskDragInProgress} = this.props;
-        console.log("isDragged",isTaskDragInProgress);
+        let {position,isOver,connectDropTarget,dragInfo} = this.props;
+        //console.log("dragInfo",dragInfo);
         let tick = 1;
         let pxPerTick = 40;
         let width = (1 / tick * pxPerTick - TASK_SPACE_PX) + "px";
@@ -56,12 +56,12 @@ let LaneSquareWrap = DropTarget(TASK, laneSquareTarget, collectTarget)(LaneSquar
 class Lane extends Component {
 
     render() {
-        let {name, id, tasks, onClick, onTaskClick, dragHandle,onTaskDragStart,onTaskDragOver,onTaskDragEnd ,isTaskDragInProgress} = this.props;
+        let {name, id, tasks, onClick, onTaskClick, dragHandle,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd ,dragInfo} = this.props;
         tasks = tasks || [];
 
         let dropTargets = [];
         for (let i = 0 ; i < 50 ; i++) {
-            dropTargets.push(<LaneSquareWrap key={i} position={i} isTaskDragInProgress={isTaskDragInProgress}/>)
+            dropTargets.push(<LaneSquareWrap key={i} laneId={id} onTaskDragOverSquare={onTaskDragOverSquare} position={i} dragInfo={dragInfo}/>)
         }
         //console.log("id",id,"top",top);
         return (
@@ -86,9 +86,8 @@ class Lane extends Component {
                                       laneId={id}
                                       onClick={onTaskClick}
                                       onTaskDragStart={onTaskDragStart}
-                                      onTaskDragOver={onTaskDragOver}
                                       onTaskDragEnd={onTaskDragEnd}
-                                      isTaskDragInProgress={isTaskDragInProgress}
+                                      dragInfo={dragInfo}
 
                                 />)}
                         </div>

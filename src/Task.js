@@ -3,6 +3,7 @@ import Draggable from 'react-draggable';
 import {LANE_HEIGHT,TASK,TASK_SPACE_PX} from './Constants';
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
+import _ from 'lodash'
 
 const Types = {
     ITEM: "TASK"
@@ -26,38 +27,11 @@ function collectSource(connect, monitor) {
     }
 }
 
-const taskTarget = {
-    drop(props, monitor) {
-        console.log("drop:",props);
-        props.onTaskDragEnd(props.laneId,props.task.id);
-    },
-    hover(props) {
-        props.onTaskDragOver(props.laneId,props.task.id);
-    }
-};
-
-function collectTarget(connect, monitor) {
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver()
-    };
-}
-
-class TaskDropTarget extends Component {
-    state = {
-        isOver: false
-    };
-
-    // componentWillReceiveProps = (nextProps) => {
-    //     if (nextProps.isOver === this.props.isOver) return;
-    //     if (nextProps.isOver) {
-    //         this.props.onTaskDragOver(this.props.task)
-    //     }
-    // }
+class TaskRightHandle extends Component {
     render() {
         let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
-        let {isOver,connectDropTarget} = this.props
+        let {isOver} = this.props
 
         let style = {
             transition: "left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
@@ -84,9 +58,6 @@ class TaskDropTarget extends Component {
         )
     }
 }
-
-let TaskDropTargetWrap = DropTarget(Types.ITEM, taskTarget, collectTarget)(TaskDropTarget);
-
 
 class Task extends Component {
     state = {
@@ -116,10 +87,18 @@ class Task extends Component {
 
     };
     render() {
-        const { isDragging, connectDragSource, isTaskDragInProgress,src, isOver } = this.props;
-
+        // isDragging - is this specific task being dragged?
+        const { isDragging, connectDragSource, dragInfo} = this.props;
         let {task,laneId,tick,pxPerTick,idx,onClick} = this.props;
-        console.log("isTaskDragInProgress",isTaskDragInProgress,"=?=",task.id);
+        let isDragInProgress = false;
+        if (!_.isEmpty(dragInfo)) {
+            // something is being dragged
+            if (dragInfo.sourceLaneId !== laneId || dragInfo.sourceTaskId !== task.id) {
+                isDragInProgress = true;
+            }
+        }
+
+        //console.log("isDragging", isDragging, "dragInfo",dragInfo.sourceTaskId,"=?=",task.id);
         let {name,length,start,shift} = task
         tick = tick || 1;
         pxPerTick = pxPerTick || 40;
@@ -137,11 +116,11 @@ class Task extends Component {
             color: this.props.color || this.style.color,
             left,
             top: "0px",
-            zIndex: isTaskDragInProgress ? (isTaskDragInProgress === task.id ? idx : -1 ) : idx
+            zIndex: isDragInProgress ? -1 : idx
         }
-        if (isDragging) {
-            divStyle= {...divStyle,zIndex: -1,opacity: 0.5}
-        }
+         if (isDragging ) {
+             divStyle= {...divStyle,zIndex: -1,opacity: 0.5}
+         }
 
         return connectDragSource(
                 <div onDoubleClick={(e) => {
@@ -149,7 +128,7 @@ class Task extends Component {
                         if (onClick) onClick(this.props.task)
                     }}
                      style={divStyle}>
-                    <TaskDropTarget onTaskDragEnd={this.props.onTaskDragOver} onTaskDragOver={this.props.onTaskDragOver} task={this.props.task} laneId={laneId}/>
+                    <TaskRightHandle />
                     <span style={{marginLeft: "10px"}}>{name}</span>
                 </div>
         );
