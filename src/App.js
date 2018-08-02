@@ -189,6 +189,7 @@ class App extends Component {
                        onTaskDragStart = {(laneId,taskId) => {
                            console.log("Task being dragged: ",taskId);
                            store.setDraggedTask(laneId,taskId)
+                           this.setState({});
                        }}
                        onTaskDragOver = {(laneId,taskId) => {
                            console.log("Task being dragged over : ",taskId);
@@ -196,11 +197,14 @@ class App extends Component {
                            this.setState({});
                        }}
                        onTaskDragEnd = {(laneId,taskId) => {
-                           if (!laneId || !taskId) return;
-                           console.log("Task dropped: ",taskId)
-                           store.setTaskDrop(laneId,taskId);
+                           console.log("Task Drag End");
+                           if (laneId && taskId) {
+                               console.log("Task dropped: ", taskId);
+                           }
+                           store.setTaskDrop(laneId, taskId);
                            this.setState({});
                        }}
+                       isTaskDragInProgress = {store.isTaskDragInProgress()}
 
                        onReorder ={(oldIdx, newIdx) => {
                            // note that "local" lanes, and the one at store might not be the same.

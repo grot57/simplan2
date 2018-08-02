@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
-import {LANE_HEIGHT} from './Constants';
+import {LANE_HEIGHT,TASK,TASK_SPACE_PX} from './Constants';
 import { DragSource } from 'react-dnd';
 import { DropTarget } from 'react-dnd';
 
@@ -77,7 +77,7 @@ class TaskDropTarget extends Component {
 
         };
 
-        return connectDropTarget(
+        return (
             <span style={style}>
 
             </span>
@@ -96,8 +96,6 @@ class Task extends Component {
         color: "white",
         background: "blue",
         isDragged: false,
-        dragStartPosition: {x:0, y:0},
-
     };
 
     style = {
@@ -118,15 +116,20 @@ class Task extends Component {
 
     };
     render() {
-        const { isDragging, connectDragSource, src, isOver } = this.props;
+        const { isDragging, connectDragSource, isTaskDragInProgress,src, isOver } = this.props;
+
         let {task,laneId,tick,pxPerTick,idx,onClick} = this.props;
-        let {name,length,start} = task
+        console.log("isTaskDragInProgress",isTaskDragInProgress,"=?=",task.id);
+        let {name,length,start,shift} = task
         tick = tick || 1;
         pxPerTick = pxPerTick || 40;
+        if (!shift) {
+            shift = 0;
+        }
         name = name || this.state.name;
         length = length || this.state.length;
-        let width = (length / tick * pxPerTick - 6) + "px";
-        let left = (start / tick * pxPerTick) + "px";
+        let width = (length / tick * pxPerTick - TASK_SPACE_PX) + "px";
+        let left = ((start+shift) / tick * pxPerTick) + "px";
         let divStyle = {
             ...this.style,
             width,
@@ -134,10 +137,10 @@ class Task extends Component {
             color: this.props.color || this.style.color,
             left,
             top: "0px",
-            zIndex: idx
+            zIndex: isTaskDragInProgress ? (isTaskDragInProgress === task.id ? idx : -1 ) : idx
         }
         if (isDragging) {
-            divStyle= {...divStyle, zIndex:9999,opacity: 0.5}
+            divStyle= {...divStyle,zIndex: -1,opacity: 0.5}
         }
 
         return connectDragSource(
@@ -146,11 +149,11 @@ class Task extends Component {
                         if (onClick) onClick(this.props.task)
                     }}
                      style={divStyle}>
-                    <TaskDropTargetWrap onTaskDragEnd={this.props.onTaskDragOver} onTaskDragOver={this.props.onTaskDragOver} task={this.props.task} laneId={laneId}/>
+                    <TaskDropTarget onTaskDragEnd={this.props.onTaskDragOver} onTaskDragOver={this.props.onTaskDragOver} task={this.props.task} laneId={laneId}/>
                     <span style={{marginLeft: "10px"}}>{name}</span>
                 </div>
         );
     }
 }
 
-export default DragSource(Types.ITEM, taskSource, collectSource)(Task);
+export default DragSource(TASK, taskSource, collectSource)(Task);

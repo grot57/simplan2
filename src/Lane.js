@@ -4,16 +4,68 @@
 import React, { Component } from 'react';
 import Task from './Task';
 import {Col,Row} from 'react-bootstrap';
+import {LANE_HEIGHT,TASK,TASK_SPACE_PX} from "./Constants";
+import { DropTarget } from 'react-dnd';
+
+const Types = {
+    ITEM: "TASK"
+}
+
+const laneSquareTarget = {
+    drop(props, monitor) {
+        console.log("dropped", props.position);
+        //props.onTaskDragEnd(props.laneId,props.task.id);
+    },
+    hover(props) {
+        console.log("hover", props.position);
+        //props.onTaskDragOver(props.laneId,props.task.id);
+    }
+};
+
+function collectTarget(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver()
+    };
+}
+
+class LaneSquare extends Component {
+    render() {
+        let {position,isOver,connectDropTarget,isTaskDragInProgress} = this.props;
+        console.log("isDragged",isTaskDragInProgress);
+        let tick = 1;
+        let pxPerTick = 40;
+        let width = (1 / tick * pxPerTick - TASK_SPACE_PX) + "px";
+        let left = (position / tick * pxPerTick) + "px";
+        return connectDropTarget(
+            <div style={{
+                zIndex: 0,
+                position: "absolute",
+                left,
+                width,
+                background: isOver ? "yellow" : "lightGrey",
+                opacity: isOver ? 0.5 : 0.5,
+                height: LANE_HEIGHT + "px" ,
+            }} />);
+    }
+}
+
+let LaneSquareWrap = DropTarget(TASK, laneSquareTarget, collectTarget)(LaneSquare);
+
 
 class Lane extends Component {
 
     render() {
-        let {name, id, tasks, onClick, onTaskClick, dragHandle,onTaskDragStart,onTaskDragOver,onTaskDragEnd} = this.props;
+        let {name, id, tasks, onClick, onTaskClick, dragHandle,onTaskDragStart,onTaskDragOver,onTaskDragEnd ,isTaskDragInProgress} = this.props;
         tasks = tasks || [];
 
+        let dropTargets = [];
+        for (let i = 0 ; i < 50 ; i++) {
+            dropTargets.push(<LaneSquareWrap key={i} position={i} isTaskDragInProgress={isTaskDragInProgress}/>)
+        }
         //console.log("id",id,"top",top);
         return (
-                <div onMouseDown={e => e.stopPropagation()} style={{marginTop: "5px", display: "block", position: "relative"}}>
+                <div style={{marginTop: "5px", display: "block", position: "relative"}}>
                     <Row>
                     <Col xs={2}>
                         <div onClick={() => {onClick(id)}} className="Lane-name" >
@@ -22,6 +74,9 @@ class Lane extends Component {
                         </div>
                     </Col>
                     <Col xs={10}>
+                        <div style={{position: "relative",dispaly:"block"}}>
+                            {dropTargets}
+                        </div>
                         {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
                         <div onMouseDown={e => e.stopPropagation()} style={{  position: "relative"}}>
                             {tasks.map((t,idx) =>
@@ -33,6 +88,7 @@ class Lane extends Component {
                                       onTaskDragStart={onTaskDragStart}
                                       onTaskDragOver={onTaskDragOver}
                                       onTaskDragEnd={onTaskDragEnd}
+                                      isTaskDragInProgress={isTaskDragInProgress}
 
                                 />)}
                         </div>

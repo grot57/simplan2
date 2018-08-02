@@ -88,8 +88,8 @@ class TaskStore {
     };
 
     addTaskToLane(taskId, laneId) {
-        let t = this.tasks.find(tt => tt.id == taskId);
-        let l = this.lanes.find(ll => ll.id == laneId);
+        let t = this.tasks.find(tt => tt.id === taskId);
+        let l = this.lanes.find(ll => ll.id === laneId);
         if (_.isEmpty(t) || _.isEmpty(l)) {
             console.log("Can't find task", taskId, "or lane", laneId);
             return;
@@ -151,7 +151,7 @@ class TaskStore {
             }
             return {
                 ...t,
-                start: t.start + shift
+                shift
             }
         });
         return _.filter(shifttedTasks,null);
@@ -196,6 +196,12 @@ class TaskStore {
         let sourceTask = this.tasks[sourceIdx];
         this.tasks.splice(sourceIdx,1).splice(targetIdx,0,sourceTask);
         this.dragInfo = {};
+    }
+
+    isTaskDragInProgress() {
+        let _isTaskDragInProgress = (this.dragInfo.sourceLaneId && this.dragInfo.sourceTaskId);
+        console.log("_isTaskDragInProgress",_isTaskDragInProgress);
+        return _isTaskDragInProgress;
     }
 
         // reorder list of lanes.

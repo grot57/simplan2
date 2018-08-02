@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {SortableContainer, SortableElement, SortableHandle, arrayMove} from 'react-sortable-hoc';
 import {List} from 'react-virtualized';
-import grip from './grip-vertical-solid.svg';
 
 import {Glyphicon} from 'react-bootstrap';
 
@@ -13,7 +12,7 @@ import _ from 'lodash';
 const DragHandle = SortableHandle(() => <Glyphicon glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10, cursor: "move"}}/>);
 
 const SortableItem = SortableElement(({value}) => {
-    let {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOver,onTaskDragEnd} = value;
+    let {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOver,onTaskDragEnd,isTaskDragInProgress} = value;
     return (
             <div>
                 <Lane key={lane.id}
@@ -28,6 +27,7 @@ const SortableItem = SortableElement(({value}) => {
                       onTaskDragStart={onTaskDragStart}
                       onTaskDragOver={onTaskDragOver}
                       onTaskDragEnd={onTaskDragEnd}
+                      isTaskDragInProgress={isTaskDragInProgress}
                 />
             </div>
 
@@ -68,13 +68,14 @@ class Lanes extends Component {
             onTaskDragStart,
             onTaskDragOver,
             onTaskDragEnd,
+            isTaskDragInProgress
         } = this.props;
 
         //lanes = this.reorderLanes(lanes);
         //console.log(lanes)
         let laneItems = lanes.map((lane) => {
                 let tasks = store.getTasksByLane(lane.id);
-                return {value: {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOver,onTaskDragEnd}, height: 89}
+                return {value: {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOver,onTaskDragEnd,isTaskDragInProgress}, height: 89}
             }
         );
         return (
