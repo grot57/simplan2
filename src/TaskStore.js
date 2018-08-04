@@ -51,9 +51,13 @@ class TaskStore {
     }
     setTask(task) {
         // based on task id, either update exiting task, or add a new one
+        // fix numeric attributes
+        task.length = +(task.length) || 5;
+        task.start = +(task.start) || 0;
+
         let idx = _.findIndex(this.tasks,{id:task.id});
         if (idx < 0) {
-            // new lane
+            // new task
             if (_.isNil(task.id)) {
                 task.id = uuid();
             }
@@ -66,6 +70,9 @@ class TaskStore {
     }
 
     createTask(task) {
+        // fix numeric attributes
+        task.length = +(task.length) || 5;
+        task.start = +(task.start) || 0;
         let newTask = {
             ...defaultTask,
             ...task,
@@ -125,73 +132,80 @@ class TaskStore {
         } else {
             tasks = _.filter(this.tasks, l.props);
         }
-        tasks = this._orderTasks(tasks);
-        tasks = this.calcDnDShift(laneId,tasks);
-        return [...tasks]
+        tasks = this.orderTasks(laneId,tasks);
+        return [...tasks];
     }
 
-    calcDnDShift(laneId,tasks) {
+    orderTasks(laneId,tasks) {
         if (!this.dragInfo.sourceLaneId || this.dragInfo.targetLaneId !== laneId) {
-            return tasks;
+            return this._calcStarts(tasks);
         }
-        let targetPosition = this.dragInfo.targetPosition;
-        // find dragged-over task:
-        let draggedOverTask = _.filter(tasks, t => {
-            if (t.start <= targetPosition && t.start+t.length > targetPosition) {
-                return true;
-            }
-            return false;
-        });
-        if (_.isEmpty(draggedOverTask)) {
-            return tasks;
-        }
-
-        let _tasks =
-
-
-
-
-
-
-        let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId})
+        let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId});
         if (!sourceTask) {
-            return tasks;
+            return this._calcStarts(tasks);
         }
 
-        let shifttedTasks = [];
-        let sourceTaskPositioned =false;
-        let shift = 0;
-        tasks.forEach(t => {
-            if (t.start+shift >= this.dragInfo.tagetPostion) {
-                shifttedTasks.push({
-                    ...sourceTask,
-                    shift
-                });
-                shift += sourceTask.length || 5;
-                sourceTaskPositioned = true;
-            }
-            if (t.id === sourceTask.id) {
-                shift -= sourceTask.length || 5;
-                return;
-            }
-            shifttedTasks.push({
-                ...t,
-                shift
-            });
-        })
-        // push source task at the end if needed
-        if (!sourceTaskPositioned) {
-            shifttedTasks.push({
-                ...sourceTask,
-                shift,
-                start: nextStart
-            });
+
+
+        let targetPosition = this.dragInfo.targetPosition;
+
+        if (targetPosition === 0) {
+            targetPosition;
+        }
+        if (targetPosition === 1) {
+            targetPosition;
+        }
+        if (targetPosition === 3) {
+            targetPosition;
+        }
+        if (targetPosition === 4) {
+            targetPosition;
+        }
+        if (targetPosition === 5) {
+            targetPosition;
+        }
+        if (targetPosition === 6) {
+            targetPosition;
+        }
+        if (targetPosition === 7) {
+            targetPosition;
+        }
+        if (targetPosition === 8) {
+            targetPosition;
+        }
+        if (targetPosition === 9) {
+            targetPosition;
+        }
+        if (targetPosition === 10) {
+            targetPosition;
+        }
+        if (targetPosition === 11) {
+            targetPosition;
+        }
+        if (targetPosition === 12) {
+            targetPosition;
         }
 
-        return _.filter(shifttedTasks,null);
+
+        // first take out source task (if exists) from task list.
+        tasks = _.filter(tasks,t => t.id !== sourceTask.id);
+        tasks = _.filter(tasks,t => t.id !== sourceTask.id);
+
+        let targetIdx = tasks.length;
+        let nextStart = 0;
+        tasks.forEach((t,idx) => {
+            nextStart += t.length;
+            if (nextStart >= targetPosition) {
+                targetIdx = Math.min(idx,targetIdx);
+            }
+        });
+        tasks.splice(targetIdx,0,sourceTask);
+
+        return this._calcStarts(tasks);
+
     }
 
-    _orderTasks(tasks) {
+    _calcStarts(tasks) {
         let nextStart = 0;
         return tasks.map(t => {
             let tt = {...t};
@@ -201,6 +215,45 @@ class TaskStore {
             return tt;
         });
     }
+
+    calcDnDShift(laneId,tasks) {
+        if (!this.dragInfo.sourceLaneId || this.dragInfo.targetLaneId !== laneId) {
+            return tasks;
+        }
+        let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId})
+        if (!sourceTask) {
+            return tasks;
+        }
+        let targetPosition = this.dragInfo.targetPosition;
+        // filter out source-task... will re-insert based on new position
+        tasks = _.filter(tasks,t => t.id !== sourceTask.id);
+        // find dragged-over task
+        let draggedOverTasks = _.filter(tasks, t => {
+            if (t.start <= targetPosition && t.start+t.length > targetPosition) {
+                return true;
+            }
+            return false;
+        });
+        if (_.isEmpty(draggedOverTasks)) {
+            return tasks;
+        }
+
+
+        let _tasks = [];
+        let start = 0;
+        tasks.forEach(t => {
+            if (!_.isEmpty(_.filter(draggedOverTasks,{id: t.id}))) {
+                // this is the dragged over task - push the source task just before it.
+                _tasks.push({...sourceTask,start});
+                start += sourceTask.length;
+            }
+            _tasks.push({...t,start});
+            start += t.length;
+        })
+        return _.filter(_tasks,null);
+    }
+
+
 
     // reorder list of lanes.
     // move source-lane to "just-before" target-lane

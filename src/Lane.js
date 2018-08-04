@@ -44,7 +44,7 @@ class LaneSquare extends Component {
                 left,
                 width,
                 background: isOver ? "yellow" : "lightGrey",
-                opacity: isOver ? 0.5 : 0.5,
+                opacity: isOver ? 0.5 : 0,
                 height: LANE_HEIGHT + "px" ,
             }} />);
     }

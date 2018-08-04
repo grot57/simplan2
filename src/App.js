@@ -128,6 +128,19 @@ class App extends Component {
         )
     }
 
+    _update = () => {
+        this.setState({});
+    };
+    update = _.debounce(this._update,150);
+
+    _onTaskDragOverSquare = (laneId,position) => {
+        //console.log("Task being dragged over square : ",laneId,position);
+        store.setTaskDragOverSquare(laneId, position);
+        this._update();
+    };
+
+    //_onTaskDragOverSquareDebounce = _.debounce(this._onTaskDragOverSquare,150);
+
     render() {
         // setTimeout(() => {
         //     let c = this.state.count;
@@ -191,18 +204,19 @@ class App extends Component {
                            store.setDraggedTask(laneId,taskId)
                            this.setState({});
                        }}
-                       onTaskDragOverSquare = {(laneId,position) => {
-                           //console.log("Task being dragged over square : ",laneId,position);
-                           store.setTaskDragOverSquare(laneId,position);
-                           this.setState({});
-                       }}
+                       onTaskDragOverSquare = {this._onTaskDragOverSquare}
+
                        onTaskDragEnd = {(laneId,taskId) => {
                            console.log("Task Drag End");
                            if (laneId && taskId) {
                                console.log("Task dropped: ", taskId);
                            }
-                           store.setTaskDrop(laneId, taskId);
-                           this.setState({});
+                           let that = this;
+                           _.debounce(function temp() {
+                               store.setTaskDrop(laneId, taskId);
+                               that.setState({});
+                           }, 250)();
+
                        }}
                        dragInfo = {store.getDragInfo()}
 
@@ -230,7 +244,10 @@ class App extends Component {
                            this.setState({})
                        }}
                 />
+                <div>
 
+                    {JSON.stringify(store.getDragInfo())}
+                </div>
                 {this.renderLaneDetails()}
                 {this.renderTaskDetails()}
             </div>
