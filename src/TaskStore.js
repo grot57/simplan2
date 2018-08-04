@@ -186,20 +186,24 @@ class TaskStore {
             targetPosition;
         }
 
-
-        // first take out source task (if exists) from task list.
-        tasks = _.filter(tasks,t => t.id !== sourceTask.id);
-        tasks = _.filter(tasks,t => t.id !== sourceTask.id);
-
         let targetIdx = tasks.length;
         let nextStart = 0;
         tasks.forEach((t,idx) => {
-            nextStart += t.length;
             if (nextStart >= targetPosition) {
+                if (t.id === sourceTask.id) {
+                    // no move
+                    targetIdx = -1;
+                }
                 targetIdx = Math.min(idx,targetIdx);
             }
+            nextStart += t.length;
         });
-        tasks.splice(targetIdx,0,sourceTask);
+        if (targetIdx >= 0) {
+            // first take out source task (if exists) from task list.
+            tasks = _.filter(tasks, t => t.id !== sourceTask.id);
+            // then insert it again in the new location.
+            tasks.splice(targetIdx, 0, sourceTask);
+        }
 
         return this._calcStarts(tasks);
 
