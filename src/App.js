@@ -22,7 +22,7 @@ const store = new TaskStore();
 
 
 function init() {
-    store.setLane({name:"backlog", timeline: false, props: {}});
+    store.setLane({name:"backlog", timeline: false, props: {done:"false"}});
     // store.createTask({name: "firstTask",length:5,start: 0, category: "backlog"});
     // store.createTask({name: "firstTask",length:5,start: 5, category: "backlog"});
     // store.createTask({name: "firstTask",length:5,start: 10, category: "backlog"});
@@ -205,7 +205,7 @@ class App extends Component {
                                         })}}
                                     bsStyle="link"
                                     title={"Add Lane"}><Glyphicon glyph="open-file" />Open file</Button>
-                            <Button onClick={() => {downloadObjectAsJson(store.getState(),"simplan.json")}}
+                            <Button onClick={() => {downloadObjectAsJson(store.getState(),store.projectName + ".json")}}
                                     bsStyle="link"
                                     title={"Save To File"}><Glyphicon glyph="save-file" />Save to file</Button>
                         </span>

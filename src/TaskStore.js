@@ -9,6 +9,7 @@ const defaultTask = {
     category: "backlog",
     start: 0,
     length: 5,
+    done: "false",
     id: null,
 }
 
@@ -75,6 +76,7 @@ class TaskStore {
 
         task.length = +(task.length) || 5;
         task.start = +(task.start) || 0;
+        task.done = task.done || "false";
 
         let idx = _.findIndex(this.tasks,{id:task.id});
         if (idx < 0) {

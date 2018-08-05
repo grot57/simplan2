@@ -109,10 +109,14 @@ class Task extends Component {
         length = length || this.state.length;
         let width = (length / tick * pxPerTick - TASK_SPACE_PX) + "px";
         let left = ((start+shift) / tick * pxPerTick) + "px";
+        let bg = this.props.background || this.style.background;
+        if (task && task.background) {
+            bg = task.background;
+        }
         let divStyle = {
             ...this.style,
             width,
-            background: this.props.background || this.style.background,
+            background: bg,
             color: this.props.color || this.style.color,
             left,
             top: "0px",
