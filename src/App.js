@@ -254,8 +254,6 @@ class App extends Component {
                        }}
                 />
                 <div>
-
-                    {JSON.stringify(store.getDragInfo())}
                 </div>
                 {this.renderLaneDetails()}
                 {this.renderTaskDetails()}

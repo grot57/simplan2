@@ -9,7 +9,7 @@ import {LANE_HEIGHT} from "./Constants";
 import _ from 'lodash';
 
 
-const DragHandle = SortableHandle(() => <Glyphicon glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10, cursor: "move"}}/>);
+const DragHandle = SortableHandle(() => <Glyphicon className="hoverOnly" glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10, cursor: "move"}}/>);
 
 const SortableItem = SortableElement(({value}) => {
     let {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,dragInfo} = value;
@@ -49,7 +49,7 @@ class VirtualList extends Component {
                     }}
                     rowCount={items.length}
                     width={window.innerWidth}
-                    height={window.innerHeight - 200}
+                    height={window.innerHeight - 120}
                 />
         );
     }
@@ -75,7 +75,7 @@ class Lanes extends Component {
         //console.log(lanes)
         let laneItems = lanes.map((lane) => {
                 let tasks = store.getTasksByLane(lane.id);
-                return {value: {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,dragInfo}, height: 89}
+                return {value: {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,dragInfo}, height: 60}
             }
         );
         return (

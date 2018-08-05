@@ -78,3 +78,7 @@
   background: transparent;
   border-color: transparent;
 }
+
+.hoverOnly:not(:hover) {
+  opacity:0;
+}

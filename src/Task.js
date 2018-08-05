@@ -46,12 +46,12 @@ class TaskRightHandle extends Component {
             height: LANE_HEIGHT-4 + "px" ,
             cursor: "move",
             borderRadius: "4px",
-            opacity: "0.7",
+
 
         };
 
         return (
-            <span style={style}>
+            <span className="hoverOnly" style={style}>
 
             </span>
         )
@@ -81,12 +81,10 @@ class TaskLeftHandle extends Component {
             height: LANE_HEIGHT-4 + "px" ,
             cursor: "ew-resize",
             borderRadius: "4px",
-            opacity: "0.7",
-
         };
 
         return (
-            <span title="change length" style={style}>
+            <span className="hoverOnly" title="change length" style={style}>
 
             </span>
         )
