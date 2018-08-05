@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import Draggable from 'react-draggable';
 import {LANE_HEIGHT,TASK,TASK_SPACE_PX} from './Constants';
 import { DragSource } from 'react-dnd';
-import { DropTarget } from 'react-dnd';
+import {Glyphicon} from 'react-bootstrap';
 import _ from 'lodash'
 
 const Types = {
@@ -120,20 +119,24 @@ class Task extends Component {
             color: this.props.color || this.style.color,
             left,
             top: "0px",
+            overflow: "hidden",
             zIndex: isDragInProgress ? -1 : idx
-        }
-         if (isDragging ) {
+        };
+        if (isDragging ) {
              divStyle= {...divStyle,zIndex: -1,opacity: 0.5}
-         }
+        }
 
         return connectDragSource(
-                <div onDoubleClick={(e) => {
+                <div title={name} onDoubleClick={(e) => {
                         console.log("click",task);
                         if (onClick) onClick(this.props.task)
                     }}
                      style={divStyle}>
                     <TaskRightHandle />
-                    <span style={{marginLeft: "10px"}}>{name}</span>
+                    <span  style={{marginLeft: "10px"}}>
+                        {task.done === "true" ? <Glyphicon style={{color:"LawnGreen"}} title="Done!" glyph="ok-sign" /> : ""}
+                        {task.priority === "high" ? <Glyphicon style={{color:"GoldenRod"}} title="High priority" glyph="arrow-up" /> : ""} {name}
+                        </span>
                 </div>
         );
     }

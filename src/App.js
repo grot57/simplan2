@@ -23,20 +23,6 @@ const store = new TaskStore();
 
 function init() {
     store.setLane({name:"backlog", timeline: false, props: {done:"false"}});
-    // store.createTask({name: "firstTask",length:5,start: 0, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 5, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 10, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 16, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 20, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 25, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 30, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 40, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 50, category: "backlog"});
-    // store.createTask({name: "firstTask",length:5,start: 60, category: "backlog"});
-
-
-    //[{start:1, length: 2, name: "T1"},{start:3,name:"T2"}].forEach((t) => {store.createTask(t)});
-
 }
 
 function downloadObjectAsJson(exportObj, exportName){
@@ -141,7 +127,7 @@ class App extends Component {
         this._update();
     };
 
-    //_onTaskDragOverSquareDebounce = _.debounce(this._onTaskDragOverSquare,150);
+    _onTaskDragOverSquareDebounce = _.debounce(this._onTaskDragOverSquare,150);
 
     render() {
         // setTimeout(() => {
@@ -227,7 +213,7 @@ class App extends Component {
                            store.setDraggedTask(laneId,taskId)
                            this.setState({});
                        }}
-                       onTaskDragOverSquare = {this._onTaskDragOverSquare}
+                       onTaskDragOverSquare = {this._onTaskDragOverSquareDebounce}
 
                        onTaskDragEnd = {(laneId,taskId) => {
                            console.log("Task Drag End");

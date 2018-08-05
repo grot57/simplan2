@@ -146,43 +146,6 @@ class TaskStore {
 
         let targetPosition = this.dragInfo.targetPosition;
 
-        if (targetPosition === 0) {
-            targetPosition;
-        }
-        if (targetPosition === 1) {
-            targetPosition;
-        }
-        if (targetPosition === 3) {
-            targetPosition;
-        }
-        if (targetPosition === 4) {
-            targetPosition;
-        }
-        if (targetPosition === 5) {
-            targetPosition;
-        }
-        if (targetPosition === 6) {
-            targetPosition;
-        }
-        if (targetPosition === 7) {
-            targetPosition;
-        }
-        if (targetPosition === 8) {
-            targetPosition;
-        }
-        if (targetPosition === 9) {
-            targetPosition;
-        }
-        if (targetPosition === 10) {
-            targetPosition;
-        }
-        if (targetPosition === 11) {
-            targetPosition;
-        }
-        if (targetPosition === 12) {
-            targetPosition;
-        }
-
         let targetTask ;
         let nextStart = 0;
         // find targetTask (the one position is pointing to)
@@ -286,11 +249,16 @@ class TaskStore {
 
     // capture target lane & position for drag and drop.
     setTaskDragOverSquare(targetLaneId,targetPosition) {
+        // every time this is call we need to get back to last "history" in order to cancel any intermiddiate changes during drag
+        this.historyUndo();
+        this.historyPush();
+
         this.dragInfo = {
             ...this.dragInfo,
             targetLaneId,
             targetPosition
         };
+
         this.addTaskToLane(this.dragInfo.sourceTaskId,targetLaneId);
     }
 
