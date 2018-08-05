@@ -16,6 +16,20 @@
   transition: "left 0.2s ease-in-out 0, top 0.2s ease-in-out 0";
 }
 
+.Lane-name-center {
+  height:40px;
+  line-height: 40px;
+  color: blue;
+  /*position: absolute;*/
+  text-align: center;
+
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 10px;
+  transition: "left 0.2s ease-in-out 0, top 0.2s ease-in-out 0";
+}
+
 .Lane-name {
   height:40px;
   line-height: 40px;
@@ -40,8 +54,8 @@
 
 
 .App-header {
-  background-color: #222;
-  height: 130px;
+  background-color: #2223;
+  height: 60px;
   padding: 20px;
   color: white;
 }

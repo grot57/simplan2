@@ -20,11 +20,19 @@ const defaultLane = {
 }
 
 class TaskStore {
+    projectName = "My Project";
     tasks = [];
     lanes = [];
     dragInfo ={};
     history = [];
     historyIdx = 0;
+
+    getProjectName() {
+        return this.projectName
+    }
+    setProjectName(name) {
+        this.projectName = name;
+    }
 
     report() {
         if (this.tasks.length === 0)
@@ -365,6 +373,7 @@ class TaskStore {
         return {
             tasks: this.tasks,
             lanes: this.lanes,
+            projectName: this.projectName,
         };
     }
 
@@ -373,6 +382,7 @@ class TaskStore {
         this.tasks = json.tasks;
         this.lanes = json.lanes;
         this.dragInfo = {};
+        this.projectName = json.projectName || "My Project";
     }
 
 };

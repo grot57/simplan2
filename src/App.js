@@ -7,6 +7,7 @@ import TaskStore from './TaskStore';
 import LaneDetails from "./LaneDetails";
 import TaskDetails from "./TaskDetails";
 import {Button, Col,Row, Glyphicon} from 'react-bootstrap';
+import EdtableLabel from './EditableLabel';
 import _ from "lodash";
 import uuid from 'uuid/v4';
 
@@ -89,6 +90,7 @@ class App extends Component {
         laneDetails: null,
         taskDetails: null,
         lanePosition: {},
+        projectName: "My Project"
     }
 
     renderLaneDetails = (lane) => {
@@ -156,8 +158,15 @@ class App extends Component {
         return (
             <div className="App">
                 <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h1 className="App-title">Welcome to Simplan</h1>
+                    {store.getProjectName() === undefined ? "" :
+                        <EdtableLabel style={{marginTop: 0, color: "blue", fontSize: "18px", width: "20%"}}
+                                      value={store.getProjectName()}
+                                      onChange={(v) => {
+                                          store.setProjectName(v);
+                                          this.setState({})
+                                      }}
+                        />
+                    }
                 </header>
 
                 {/*<div style={{display: "block"}} >*/}
@@ -165,28 +174,32 @@ class App extends Component {
                 {/*<Task name={"task2"} start={this.state.count+7}/>*/}
                 {/*</div>*/}
                 <div style={{}}>
+                    <div className="Lane-name"  style={{borderBottom: "1px solid blue"}}>
 
-                    <span className="Lane-name" style={{borderBottom: "1px solid blue",width:"50%",float: "left"}}>
-                        <Button onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
-                                bsStyle="link"
-                                title={"Add Lane"}><Glyphicon glyph="plus" />New Lane</Button>
-                        <Button onClick={() => this.setState({taskDetails:{name:"New Task",type: "task",id:uuid()}})}
-                                bsStyle="link"
-                                title={"Add Task"}><Glyphicon glyph="plus" />New Task</Button>
-                        <Button onClick={() => {
-                                    store.historyUndo();
-                                    this.setState({});
-                                }} disabled={!isUndo} bsStyle="link" title={"Undo"}><Glyphicon glyph="arrow-left" />Undo</Button>
-                        <Button onClick={() => {
-                                    store.historyRedo();
-                                    this.setState({});
-                                }} disabled={!isRedo} bsStyle="link" title={"Redo"}><Glyphicon glyph="arrow-right" />Redo</Button>
-                    </span>
+                        <span className="Lane-name" style={{float: "left"}}>
+                            <Button onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
+                                    bsStyle="link"
+                                    title={"Add Lane"}><Glyphicon glyph="plus" />New Lane</Button>
+                            <Button onClick={() => this.setState({taskDetails:{name:"New Task",type: "task",id:uuid()}})}
+                                    bsStyle="link"
+                                    title={"Add Task"}><Glyphicon glyph="plus" />New Task</Button>
+                            <Button onClick={() => {
+                                        store.historyUndo();
+                                        this.setState({});
+                                    }} disabled={!isUndo} bsStyle="link" title={"Undo"}><Glyphicon glyph="arrow-left" />Undo</Button>
+                            <Button onClick={() => {
+                                        store.historyRedo();
+                                        this.setState({});
+                                    }} disabled={!isRedo} bsStyle="link" title={"Redo"}><Glyphicon glyph="arrow-right" />Redo</Button>
+                        </span>
 
 
-                        <span className="Lane-name-right" style={{borderBottom: "1px solid blue",width:"50%",float:"right"}}>                            <span>
+
+                        <span className="Lane-name-right" style={{float:"right"}}>
                             <Button onClick={() => {
                                         openFile((f) => {
+                                            store.setProjectName(undefined);
+                                            this.setState({})
                                             store.restoreState(JSON.parse(f));
                                             this.setState({})
                                         })}}
@@ -195,8 +208,8 @@ class App extends Component {
                             <Button onClick={() => {downloadObjectAsJson(store.getState(),"simplan.json")}}
                                     bsStyle="link"
                                     title={"Save To File"}><Glyphicon glyph="save-file" />Save to file</Button>
-                            </span>
                         </span>
+                    </div>
 
 
                 </div>
