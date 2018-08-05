@@ -21,7 +21,7 @@ const store = new TaskStore();
 
 
 function init() {
-    store.createLane({name:"backlog", timeline: false, props: {}});
+    store.setLane({name:"backlog", timeline: false, props: {}});
     // store.createTask({name: "firstTask",length:5,start: 0, category: "backlog"});
     // store.createTask({name: "firstTask",length:5,start: 5, category: "backlog"});
     // store.createTask({name: "firstTask",length:5,start: 10, category: "backlog"});
@@ -151,6 +151,8 @@ class App extends Component {
         //     this.setState({count: c});
         // },10000)
         let lanes = store.getAllLanes();
+        let isRedo = store.isRedo();
+        let isUndo = store.isUndo();
         return (
             <div className="App">
                 <header className="App-header">
@@ -171,6 +173,14 @@ class App extends Component {
                         <Button onClick={() => this.setState({taskDetails:{name:"New Task",type: "task",id:uuid()}})}
                                 bsStyle="link"
                                 title={"Add Task"}><Glyphicon glyph="plus" />New Task</Button>
+                        <Button onClick={() => {
+                                    store.historyUndo();
+                                    this.setState({});
+                                }} disabled={!isUndo} bsStyle="link" title={"Undo"}><Glyphicon glyph="arrow-left" />Undo</Button>
+                        <Button onClick={() => {
+                                    store.historyRedo();
+                                    this.setState({});
+                                }} disabled={!isRedo} bsStyle="link" title={"Redo"}><Glyphicon glyph="arrow-right" />Redo</Button>
                     </span>
 
 
