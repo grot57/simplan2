@@ -5,7 +5,7 @@ import uuid from 'uuid/v4';
 const defaultTask = {
     name: "undefined",
     assignee: "unknown",
-    masterLane: null,
+    timeline: null,
     category: "backlog",
     start: 0,
     length: 5,
@@ -100,7 +100,7 @@ class TaskStore {
             return;
         }
         if (l.timeline) {
-            t.masterLane = laneId;
+            t.timeline = laneId;
         };
         _.keys(l.props).forEach(k => {
             t[k]=l.props[k]

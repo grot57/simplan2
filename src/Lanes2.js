@@ -12,7 +12,7 @@ import _ from 'lodash';
 const DragHandle = SortableHandle(() => <Glyphicon className="hoverOnly" glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10, cursor: "move"}}/>);
 
 const SortableItem = SortableElement(({value}) => {
-    let {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,dragInfo} = value;
+    let {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,onTaskResizeStart,onTaskResizeEnd,dragInfo} = value;
     return (
             <div>
                 <Lane key={lane.id}
@@ -27,6 +27,8 @@ const SortableItem = SortableElement(({value}) => {
                       onTaskDragStart={onTaskDragStart}
                       onTaskDragOverSquare={onTaskDragOverSquare}
                       onTaskDragEnd={onTaskDragEnd}
+                      onTaskResizeStart={onTaskResizeStart}
+                      onTaskResizeEnd={onTaskResizeEnd}
                       dragInfo={dragInfo}
                 />
             </div>
@@ -68,6 +70,8 @@ class Lanes extends Component {
             onTaskDragStart,
             onTaskDragOverSquare,
             onTaskDragEnd,
+            onTaskResizeStart,
+            onTaskResizeEnd,
             dragInfo
         } = this.props;
 
@@ -75,7 +79,7 @@ class Lanes extends Component {
         //console.log(lanes)
         let laneItems = lanes.map((lane) => {
                 let tasks = store.getTasksByLane(lane.id);
-                return {value: {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,dragInfo}, height: 60}
+                return {value: {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,onTaskResizeStart,onTaskResizeEnd,dragInfo}, height: 60}
             }
         );
         return (

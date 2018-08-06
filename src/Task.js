@@ -8,7 +8,7 @@ const Types = {
     ITEM: "TASK"
 }
 
-const taskSource = {
+const taskMoveSource = {
     beginDrag(props) {
         console.log("begin drag:",props);
         props.onTaskDragStart(props.laneId,props.task.id);
@@ -19,12 +19,31 @@ const taskSource = {
         props.onTaskDragEnd();
     }
 }
-function collectSource(connect, monitor) {
+function collectTaskMoveSource(connect, monitor) {
     return {
         connectDragSource: connect.dragSource(),
         isDragging: monitor.isDragging(),
     }
 }
+
+const taskResizeSource = {
+    beginDrag(props) {
+        console.log("begin resize:",props);
+        props.onTaskResizeStart(props.laneId,props.task.id);
+        return {}
+    },
+    endDrag(props) {
+        /* code here */
+        props.onTaskResizeEnd();
+    }
+}
+function collectTaskResizeSource(connect, monitor) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+    }
+}
+
 
 class TaskRightHandle extends Component {
     render() {
@@ -37,7 +56,7 @@ class TaskRightHandle extends Component {
             marginLeft: "0px",
             background: isOver ? yellowPpattern : bluePattern,
             width: "10px",
-            zIndex: 10,
+            zIndex: 100,
             textAlign: "left",
             verticalAlign: "middle",
             justifyContent: 'center',
@@ -62,14 +81,14 @@ class TaskLeftHandle extends Component {
     render() {
         let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
-        let {isOver} = this.props
+        let {isOver,connectDragSource} = this.props
 
         let style = {
             transition: "left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
             marginLeft: "0px",
             background: isOver ? yellowPpattern : bluePattern,
             width: "10px",
-            zIndex: 10,
+            zIndex: 100,
             textAlign: "right",
             float: "right",
             verticalAlign: "middle",
@@ -84,12 +103,15 @@ class TaskLeftHandle extends Component {
         };
 
         return (
-            <span className="hoverOnly" title="change length" style={style}>
+            connectDragSource(<span className="hoverOnly" title="change length" style={style}>
 
-            </span>
+            </span>)
         )
     }
 }
+let TaskResizeHandle = DragSource(TASK, taskResizeSource, collectTaskResizeSource)(TaskLeftHandle);
+
+
 
 class Task extends Component {
     state = {
@@ -175,10 +197,10 @@ class Task extends Component {
                         {task.priority === "high" ? <Glyphicon style={{color:"GoldenRod"}} title="High priority" glyph="arrow-up" /> : ""}
                         <span> {name}</span>
                     </span>
-                    <TaskLeftHandle />
+                    <TaskResizeHandle task={this.props.task} laneId={this.props.laneId} onTaskResizeStart={this.props.onTaskResizeStart} onTaskResizeEnd={this.props.onTaskResizeEnd} />
                 </div>
         );
     }
 }
 
-export default DragSource(TASK, taskSource, collectSource)(Task);
+export default DragSource(TASK, taskMoveSource, collectTaskMoveSource)(Task);

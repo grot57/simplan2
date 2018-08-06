@@ -56,7 +56,9 @@ let LaneSquareWrap = DropTarget(TASK, laneSquareTarget, collectTarget)(LaneSquar
 class Lane extends Component {
 
     render() {
-        let {name, id, tasks, onClick, onTaskClick, dragHandle,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd ,dragInfo} = this.props;
+        let {name, id, tasks, onClick, onTaskClick, dragHandle,
+            onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,onTaskResizeStart,onTaskResizeEnd,
+            dragInfo} = this.props;
         tasks = tasks || [];
 
         let dropTargets = [];
@@ -87,6 +89,8 @@ class Lane extends Component {
                                       onClick={onTaskClick}
                                       onTaskDragStart={onTaskDragStart}
                                       onTaskDragEnd={onTaskDragEnd}
+                                      onTaskResizeStart={onTaskResizeStart}
+                                      onTaskResizeEnd={onTaskResizeEnd}
                                       dragInfo={dragInfo}
 
                                 />)}

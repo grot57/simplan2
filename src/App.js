@@ -227,6 +227,26 @@ class App extends Component {
                            }, 250)();
 
                        }}
+
+                       onTaskResizeStart = {(laneId,taskId) => {
+                           console.log("Task being resized: ",taskId);
+                           // store.setDraggedTask(laneId,taskId)
+                           // this.setState({});
+                       }}
+
+                       onTaskResizeEnd = {(laneId,taskId) => {
+                           console.log("Task Resize End");
+                           // if (laneId && taskId) {
+                           //     console.log("Task dropped: ", taskId);
+                           // }
+                           // let that = this;
+                           // _.debounce(function temp() {
+                           //     store.setTaskDrop(laneId, taskId);
+                           //     that.setState({});
+                           // }, 250)();
+
+                       }}
+
                        dragInfo = {store.getDragInfo()}
 
                        onReorder ={(oldIdx, newIdx) => {
