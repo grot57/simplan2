@@ -150,7 +150,12 @@ When a task is assigned to a lane, it will automatically get the lanes props.`
                         <FormGroup>
                             <Row>
                                 <Col xs={12}>
-                                    <Checkbox title={this.help.timeline}>Is timeline <Glyphicon glyph="question-sign" /></Checkbox>
+                                    <Checkbox checked={this.state.lane.timeline}
+                                              onClick={e => this.setState({lane: {...this.state.lane,timeline: e.target.checked}})}
+                                              title={this.help.timeline}>
+                                        Is timeline
+                                        <Glyphicon glyph="question-sign" />
+                                    </Checkbox>
                                 </Col>
 
 

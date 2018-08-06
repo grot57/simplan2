@@ -127,7 +127,7 @@ class App extends Component {
         this._update();
     };
 
-    _onTaskDragOverSquareDebounce = _.debounce(this._onTaskDragOverSquare,150);
+    _onTaskDragOverSquareDebounce = _.debounce(this._onTaskDragOverSquare,50);
 
     render() {
         // setTimeout(() => {
