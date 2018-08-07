@@ -151,7 +151,7 @@ class App extends Component {
                     <div className="Lane-name"  style={{ borderBottom: "1px solid blue", height: "45px"}}>
 
                         <span className="Lane-name" style={{float: "left"}}>
-                            <ButtonToolbar>
+
                             <ButtonGroup>
                                 <Button style={{color: "blue"}}  bsSize="small"
                                         onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
@@ -161,32 +161,34 @@ class App extends Component {
                                         title={"Add Task"}><Glyphicon glyph="plus" />New Task</Button>
                             </ButtonGroup>
                             <ButtonGroup>
-                                <Button bsStyle="link" bsSize="small" style={{color: "blue"}}
+                                <Button  bsSize="small" style={{ color: "blue"}}
                                         onClick={() => {
                                             store.historyUndo();
                                             this.setState({});
                                         }} disabled={!isUndo} title={"Undo"}>Undo <Glyphicon glyph="arrow-left" /></Button>
-                                <Button bsStyle="link" style={{color: "blue"}}  bsSize="small"
+                                <Button  style={{ color: "blue"}}  bsSize="small"
                                         onClick={() => {
                                             store.historyRedo();
                                             this.setState({});
                                         }} disabled={!isRedo} title={"Redo"}><Glyphicon glyph="arrow-right" /></Button>
                             </ButtonGroup>
-                            </ButtonToolbar>
+
                         </span>
                         <span className="Lane-name-right" style={{float:"right"}}>
-                            <Button onClick={() => {
-                                        openFile((f) => {
-                                            store.setProjectName(undefined);
-                                            this.setState({})
-                                            store.restoreState(JSON.parse(f));
-                                            this.setState({})
-                                        })}}
-                                    bsStyle="link"
-                                    title={"Add Lane"}><Glyphicon glyph="open-file" />Open file</Button>
-                            <Button onClick={() => {downloadObjectAsJson(store.getState(),store.projectName + ".json")}}
-                                    bsStyle="link"
-                                    title={"Save To File"}><Glyphicon glyph="save-file" />Save to file</Button>
+                            <ButtonGroup>
+                                <Button bsSize="small" style={{ color: "blue"}}
+                                        onClick={() => {
+                                            openFile((f) => {
+                                                store.setProjectName(undefined);
+                                                this.setState({})
+                                                store.restoreState(JSON.parse(f));
+                                                this.setState({})
+                                            })}}
+                                        title={"Add Lane"}><Glyphicon glyph="open-file" />Open file</Button>
+                                <Button bsSize="small" style={{ marginRight: "20px", color: "blue"}}
+                                        onClick={() => {downloadObjectAsJson(store.getState(),store.projectName + ".json")}}
+                                        title={"Save To File"}><Glyphicon glyph="save-file" />Save to file</Button>
+                            </ButtonGroup>
                         </span>
                     </div>
                 </div>
