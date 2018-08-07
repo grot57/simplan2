@@ -119,7 +119,7 @@ class App extends Component {
     _update = () => {
         this.setState({});
     };
-    update = _.debounce(this._update,150);
+    update = _.debounce(this._update,100);
 
     _onTaskDragOverSquare = (laneId,position) => {
         //console.log("Task being dragged over square : ",laneId,position);
@@ -127,7 +127,7 @@ class App extends Component {
         this._update();
     };
 
-    _onTaskDragOverSquareDebounce = _.debounce(this._onTaskDragOverSquare,50);
+    onTaskDragOverSquare = _.debounce(this._onTaskDragOverSquare,50);
 
     render() {
         // setTimeout(() => {
@@ -154,12 +154,7 @@ class App extends Component {
                         />
                     }
                 </header>
-
-                {/*<div style={{display: "block"}} >*/}
-                {/*<Task name={"task1"} start={this.state.count}/>*/}
-                {/*<Task name={"task2"} start={this.state.count+7}/>*/}
-                {/*</div>*/}
-                <div style={{}}>
+                <div>
                     <div className="Lane-name"  style={{borderBottom: "1px solid blue"}}>
 
                         <span className="Lane-name" style={{float: "left"}}>
@@ -178,9 +173,6 @@ class App extends Component {
                                         this.setState({});
                                     }} disabled={!isRedo} bsStyle="link" title={"Redo"}><Glyphicon glyph="arrow-right" />Redo</Button>
                         </span>
-
-
-
                         <span className="Lane-name-right" style={{float:"right"}}>
                             <Button onClick={() => {
                                         openFile((f) => {
@@ -196,8 +188,6 @@ class App extends Component {
                                     title={"Save To File"}><Glyphicon glyph="save-file" />Save to file</Button>
                         </span>
                     </div>
-
-
                 </div>
                 <Lanes store={store}
                        lanes={lanes}
@@ -211,9 +201,10 @@ class App extends Component {
                        onTaskDragStart = {(laneId,taskId) => {
                            console.log("Task being dragged: ",taskId);
                            store.setDraggedTask(laneId,taskId)
-                           this.setState({});
+                           this._update();
                        }}
-                       onTaskDragOverSquare = {this._onTaskDragOverSquareDebounce}
+
+                       onTaskDragOverSquare = {this.onTaskDragOverSquare}
 
                        onTaskDragEnd = {(laneId,taskId) => {
                            console.log("Task Drag End");
@@ -230,21 +221,14 @@ class App extends Component {
 
                        onTaskResizeStart = {(laneId,taskId) => {
                            console.log("Task being resized: ",taskId);
-                           // store.setDraggedTask(laneId,taskId)
-                           // this.setState({});
+                           let isResize = true;
+                           store.setDraggedTask(laneId,taskId,isResize)
+                           this.update();
                        }}
 
                        onTaskResizeEnd = {(laneId,taskId) => {
                            console.log("Task Resize End");
-                           // if (laneId && taskId) {
-                           //     console.log("Task dropped: ", taskId);
-                           // }
-                           // let that = this;
-                           // _.debounce(function temp() {
-                           //     store.setTaskDrop(laneId, taskId);
-                           //     that.setState({});
-                           // }, 250)();
-
+                           this.update();
                        }}
 
                        dragInfo = {store.getDragInfo()}

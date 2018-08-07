@@ -237,11 +237,12 @@ class TaskStore {
     }
 
     // capture source task for drag-and-drop
-    setDraggedTask(sourceLaneId, sourceTaskId) {
+    setDraggedTask(sourceLaneId, sourceTaskId,isResize) {
         // note we reset the "target" info if exists
         this.dragInfo = {
             sourceLaneId,
-            sourceTaskId
+            sourceTaskId,
+            isResize
         };
         this.historyPush();
 
@@ -258,7 +259,9 @@ class TaskStore {
             targetLaneId,
             targetPosition
         };
-
+        if (this.dragInfo.isResize) {
+            // TODO RESIZE
+        }
         this.addTaskToLane(this.dragInfo.sourceTaskId,targetLaneId);
     }
 
@@ -266,35 +269,11 @@ class TaskStore {
         return this.dragInfo;
     }
 
-
-    // TODO  - is this still needed?
-    setTaskDragOver(targetLaneId,targetTaskId) {
-        this.dragInfo = {
-            ...this.dragInfo,
-            targetLaneId,
-            targetTaskId
-        };
-        this.addTaskToLane(this.dragInfo.sourceTaskId,targetLaneId);
-    }
-
-    // TODO  - is this still needed?
     setTaskDrop(targetLaneId,targetTaskId) {
-        if (!this.dragInfo.sourceLaneId ||  !this.dragInfo.targetLaneId ) {
-            this.dragInfo = {};
-            return;
-        }
         this.dragInfo = {};
         return;
-
-        // move source-task in task-list just before the "target"
-        let sourceIdx = _.findIndex(this.tasks,{id:this.dragInfo.sourceTaskId});
-        let targetIdx = _.findIndex(this.tasks,{id:this.dragInfo.targetTaskId});
-        let sourceTask = this.tasks[sourceIdx];
-        this.tasks.splice(sourceIdx,1).splice(targetIdx,0,sourceTask);
-        this.dragInfo = {};
     }
-
-
+    
     // reorder list of tasks.
     // move source-task to "just-before" target-tasj
     reorderTasks(sourceTask,targetTask) {

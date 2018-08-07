@@ -31,7 +31,7 @@ function collectTarget(connect, monitor) {
 
 class LaneSquare extends Component {
     render() {
-        let {position,isOver,connectDropTarget,dragInfo} = this.props;
+        let {position,isOver,connectDropTarget} = this.props;
         //console.log("dragInfo",dragInfo);
         let tick = 1;
         let pxPerTick = 40;
@@ -62,9 +62,13 @@ class Lane extends Component {
         tasks = tasks || [];
 
         let dropTargets = [];
-        for (let i = 0 ; i < 50 ; i++) {
-            dropTargets.push(<LaneSquareWrap key={i} laneId={id} onTaskDragOverSquare={onTaskDragOverSquare} position={i} dragInfo={dragInfo}/>)
+        if (!dragInfo.isResize || dragInfo.sourceLaneId === id) {
+            for (let i = 0; i < 50; i++) {
+                dropTargets.push(<LaneSquareWrap key={i} laneId={id} onTaskDragOverSquare={onTaskDragOverSquare}
+                                                 position={i} dragInfo={dragInfo}/>)
+            }
         }
+
         //console.log("id",id,"top",top);
         return (
                 <div style={{marginTop: "5px", display: "block", position: "relative"}}>
