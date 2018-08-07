@@ -150,7 +150,7 @@ class Task extends Component {
         let isDragInProgress = false;
         if (!_.isEmpty(dragInfo)) {
             // something is being dragged
-            if (dragInfo.sourceLaneId !== laneId || dragInfo.sourceTaskId !== task.id) {
+            if (dragInfo.sourceLaneId !== laneId || dragInfo.sourceTaskId !== task.id ||dragInfo.isResize ) {
                 isDragInProgress = true;
             }
         }

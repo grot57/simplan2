@@ -6,6 +6,7 @@ import Task from './Task';
 import {Col,Row} from 'react-bootstrap';
 import {LANE_HEIGHT,TASK,TASK_SPACE_PX} from "./Constants";
 import { DropTarget } from 'react-dnd';
+import _ from 'lodash';
 
 const Types = {
     ITEM: "TASK"
@@ -62,12 +63,12 @@ class Lane extends Component {
         tasks = tasks || [];
 
         let dropTargets = [];
-        // if (!dragInfo.isResize || dragInfo.sourceLaneId === id) {
+        if (!_.isEmpty(dragInfo) && dragInfo.isResize && dragInfo.sourceLaneId === id) { // only draw targets in this lane
             for (let i = 0; i < 50; i++) {
                 dropTargets.push(<LaneSquareWrap key={i} laneId={id} onTaskDragOverSquare={onTaskDragOverSquare}
                                                  position={i} dragInfo={dragInfo}/>)
             }
-        // }
+        }
 
         //console.log("id",id,"top",top);
         return (
@@ -84,7 +85,7 @@ class Lane extends Component {
                             {dropTargets}
                         </div>
                         {/* onMouseDown below is important! Needed to disable "draggable" on child elements*/}
-                        <div onMouseDown={e => e.stopPropagation()} style={{  position: "relative"}}>
+                        <div style={{  position: "relative"}}>
                             {tasks.map((t,idx) =>
                                 <Task key={t.id}
                                       idx={idx}
