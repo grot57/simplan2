@@ -62,12 +62,12 @@ class Lane extends Component {
         tasks = tasks || [];
 
         let dropTargets = [];
-        if (!dragInfo.isResize || dragInfo.sourceLaneId === id) {
+        // if (!dragInfo.isResize || dragInfo.sourceLaneId === id) {
             for (let i = 0; i < 50; i++) {
                 dropTargets.push(<LaneSquareWrap key={i} laneId={id} onTaskDragOverSquare={onTaskDragOverSquare}
                                                  position={i} dragInfo={dragInfo}/>)
             }
-        }
+        // }
 
         //console.log("id",id,"top",top);
         return (

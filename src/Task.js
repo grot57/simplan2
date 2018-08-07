@@ -11,7 +11,9 @@ const Types = {
 const taskMoveSource = {
     beginDrag(props) {
         console.log("begin drag:",props);
-        props.onTaskDragStart(props.laneId,props.task.id);
+        let {length,start} = props.task
+        let currentPosition = start;
+        props.onTaskDragStart(props.laneId,props.task.id,currentPosition);
         return {}
     },
     endDrag(props) {
@@ -29,7 +31,8 @@ function collectTaskMoveSource(connect, monitor) {
 const taskResizeSource = {
     beginDrag(props) {
         console.log("begin resize:",props);
-        props.onTaskResizeStart(props.laneId,props.task.id);
+        let {start} = props.task
+        props.onTaskResizeStart(props.laneId,props.task.id,start);
         return {}
     },
     endDrag(props) {
@@ -45,14 +48,14 @@ function collectTaskResizeSource(connect, monitor) {
 }
 
 
-class TaskRightHandle extends Component {
+class TaskLeftHandle extends Component {
     render() {
         let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
         let {isOver} = this.props
 
         let style = {
-            transition: "left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
+            transition: "width 0.2s ease-in-out, left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
             marginLeft: "0px",
             background: isOver ? yellowPpattern : bluePattern,
             width: "10px",
@@ -77,14 +80,14 @@ class TaskRightHandle extends Component {
     }
 }
 
-class TaskLeftHandle extends Component {
+class TaskRightHandle extends Component {
     render() {
         let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
         let {isOver,connectDragSource} = this.props
 
         let style = {
-            transition: "left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
+            transition: "width 0.2s ease-in-out, left 0.2s ease-in-out, top 0.5s ease-in-out, background 0.5s ease-in-out",
             marginLeft: "0px",
             background: isOver ? yellowPpattern : bluePattern,
             width: "10px",
@@ -109,7 +112,7 @@ class TaskLeftHandle extends Component {
         )
     }
 }
-let TaskResizeHandle = DragSource(TASK, taskResizeSource, collectTaskResizeSource)(TaskLeftHandle);
+let TaskResizeHandle = DragSource(TASK, taskResizeSource, collectTaskResizeSource)(TaskRightHandle);
 
 
 
@@ -137,7 +140,7 @@ class Task extends Component {
         alignItems: 'center',
         position: "absolute",
         border: "2px solid grey",
-        transition: "left 0.2s ease-in-out, top 0.5s ease-in-out",
+        transition: "width 0.2s ease-in-out, left 0.2s ease-in-out, top 0.5s ease-in-out",
 
     };
     render() {
@@ -153,16 +156,14 @@ class Task extends Component {
         }
 
         //console.log("isDragging", isDragging, "dragInfo",dragInfo.sourceTaskId,"=?=",task.id);
-        let {name,length,start,shift} = task
+        let {name,length,start} = task
         tick = tick || 1;
         pxPerTick = pxPerTick || 40;
-        if (!shift) {
-            shift = 0;
-        }
+
         name = name || this.state.name;
         length = length || this.state.length;
         let width = (length / tick * pxPerTick - TASK_SPACE_PX) + "px";
-        let left = ((start+shift) / tick * pxPerTick) + "px";
+        let left = (start / tick * pxPerTick) + "px";
         let background = this.props.background || this.style.background;
         let color = this.props.color || this.style.color;
         if (task && task.color) {
@@ -191,7 +192,7 @@ class Task extends Component {
                         if (onClick) onClick(this.props.task)
                     }}
                      style={divStyle}>
-                    <TaskRightHandle />
+                    <TaskLeftHandle />
                     <span  style={{marginLeft: "10px"}}>
                         {task.done === "true" ? <Glyphicon style={{color:"LawnGreen"}} title="Done!" glyph="ok-sign" /> : ""}
                         {task.priority === "high" ? <Glyphicon style={{color:"GoldenRod"}} title="High priority" glyph="arrow-up" /> : ""}

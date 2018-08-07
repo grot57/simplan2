@@ -198,9 +198,9 @@ class App extends Component {
                        onTaskClick = {(t) => {
                            this.setState({taskDetails: t})
                        }}
-                       onTaskDragStart = {(laneId,taskId) => {
+                       onTaskDragStart = {(laneId,taskId,currentPosition) => {
                            console.log("Task being dragged: ",taskId);
-                           store.setDraggedTask(laneId,taskId)
+                           store.setDraggedTask(laneId,taskId,currentPosition)
                            this._update();
                        }}
 
@@ -213,22 +213,26 @@ class App extends Component {
                            }
                            let that = this;
                            _.debounce(function temp() {
-                               store.setTaskDrop(laneId, taskId);
+                               store.setTaskDragEnd(laneId, taskId);
                                that.setState({});
                            }, 250)();
 
                        }}
 
-                       onTaskResizeStart = {(laneId,taskId) => {
+                       onTaskResizeStart = {(laneId,taskId,currentPosition) => {
                            console.log("Task being resized: ",taskId);
                            let isResize = true;
-                           store.setDraggedTask(laneId,taskId,isResize)
+                           store.setDraggedTask(laneId,taskId,currentPosition,isResize)
                            this.update();
                        }}
 
                        onTaskResizeEnd = {(laneId,taskId) => {
                            console.log("Task Resize End");
-                           this.update();
+                           let that = this;
+                           _.debounce(function temp() {
+                               store.setTaskDragEnd(laneId, taskId);
+                               that.setState({});
+                           }, 250)();
                        }}
 
                        dragInfo = {store.getDragInfo()}

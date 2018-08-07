@@ -136,7 +136,7 @@ class TaskStore {
     }
 
     orderTasks(laneId,tasks) {
-        if (!this.dragInfo.sourceLaneId || this.dragInfo.targetLaneId !== laneId) {
+        if (this.dragInfo.isResize || !this.dragInfo.sourceLaneId || this.dragInfo.targetLaneId !== laneId) {
             return this._calcStarts(tasks);
         }
         let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId});
@@ -237,11 +237,12 @@ class TaskStore {
     }
 
     // capture source task for drag-and-drop
-    setDraggedTask(sourceLaneId, sourceTaskId,isResize) {
+    setDraggedTask(sourceLaneId, sourceTaskId,sourcePosition,isResize) {
         // note we reset the "target" info if exists
         this.dragInfo = {
             sourceLaneId,
             sourceTaskId,
+            sourcePosition,
             isResize
         };
         this.historyPush();
@@ -261,6 +262,13 @@ class TaskStore {
         };
         if (this.dragInfo.isResize) {
             // TODO RESIZE
+            let sourceTask = _.find(this.tasks, {id: this.dragInfo.sourceTaskId});
+            if (!sourceTask) {
+                return;
+            }
+            console.log("Resize task:",sourceTask.length,"-->",Math.max(targetPosition - this.dragInfo.sourcePosition + 1, 1))
+            sourceTask.length = Math.max(targetPosition - this.dragInfo.sourcePosition + 1, 1);
+            return;
         }
         this.addTaskToLane(this.dragInfo.sourceTaskId,targetLaneId);
     }
@@ -269,9 +277,8 @@ class TaskStore {
         return this.dragInfo;
     }
 
-    setTaskDrop(targetLaneId,targetTaskId) {
+    setTaskDragEnd() {
         this.dragInfo = {};
-        return;
     }
     
     // reorder list of tasks.

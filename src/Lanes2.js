@@ -9,7 +9,7 @@ import {LANE_HEIGHT} from "./Constants";
 import _ from 'lodash';
 
 
-const DragHandle = SortableHandle(() => <Glyphicon className="hoverOnly" glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10, cursor: "move"}}/>);
+const DragHandle = SortableHandle(() => <Glyphicon className="hoverOnly2" glyph={"menu-hamburger"} style={{marginRight: 5, fontSize: 10, cursor: "move"}}/>);
 
 const SortableItem = SortableElement(({value}) => {
     let {lane,tasks,onClick,onTaskClick,onTaskDragStart,onTaskDragOverSquare,onTaskDragEnd,onTaskResizeStart,onTaskResizeEnd,dragInfo} = value;

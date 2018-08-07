@@ -82,3 +82,8 @@
 .hoverOnly:not(:hover) {
   opacity:0;
 }
+
+.hoverOnly2:not(:hover) {
+  opacity:0.2;
+  color: grey;
+}
