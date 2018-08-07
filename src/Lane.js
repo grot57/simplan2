@@ -63,7 +63,7 @@ class Lane extends Component {
         tasks = tasks || [];
 
         let dropTargets = [];
-        if (!_.isEmpty(dragInfo) && dragInfo.isResize && dragInfo.sourceLaneId === id) { // only draw targets in this lane
+        if (!_.isEmpty(dragInfo) && (!dragInfo.isResize || dragInfo.sourceLaneId === id)) { // only draw targets in this lane
             for (let i = 0; i < 50; i++) {
                 dropTargets.push(<LaneSquareWrap key={i} laneId={id} onTaskDragOverSquare={onTaskDragOverSquare}
                                                  position={i} dragInfo={dragInfo}/>)

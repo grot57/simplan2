@@ -50,7 +50,7 @@ function collectTaskResizeSource(connect, monitor) {
 
 class TaskLeftHandle extends Component {
     render() {
-        let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
+        let bluePattern = 'repeating-linear-gradient(45deg, white 10%, grey 20%'
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
         let {isOver} = this.props
 
@@ -82,7 +82,7 @@ class TaskLeftHandle extends Component {
 
 class TaskRightHandle extends Component {
     render() {
-        let bluePattern = 'repeating-linear-gradient(#606dbc,#606dbc 2px,#465298 2px,#465298 4px'
+        let bluePattern = 'repeating-linear-gradient(45deg, white 10%, grey 20%';
         let yellowPpattern = 'repeating-linear-gradient(to right,#f6ba52,#f6ba52 2px,#ffd180 2px,#ffd180 4px';
         let {isOver,connectDragSource} = this.props
 
