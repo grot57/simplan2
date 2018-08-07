@@ -6,7 +6,7 @@ import Task from './Task';
 import TaskStore from './TaskStore';
 import LaneDetails from "./LaneDetails";
 import TaskDetails from "./TaskDetails";
-import {Button, Col,Row, Glyphicon} from 'react-bootstrap';
+import {Button,ButtonGroup,ButtonToolbar, Glyphicon} from 'react-bootstrap';
 import EdtableLabel from './EditableLabel';
 import _ from "lodash";
 import uuid from 'uuid/v4';
@@ -23,6 +23,7 @@ const store = new TaskStore();
 
 function init() {
     store.setLane({name:"backlog", timeline: false, props: {done:"false"}});
+    store.setLane({name:"done", timeline: false, props: {done:"true"}});
 }
 
 function downloadObjectAsJson(exportObj, exportName){
@@ -66,7 +67,6 @@ function openFile(func) {
 
 
 init();
-
 
 store.report();
 
@@ -130,14 +130,7 @@ class App extends Component {
     onTaskDragOverSquare = _.debounce(this._onTaskDragOverSquare,50);
 
     render() {
-        // setTimeout(() => {
-        //     let c = this.state.count;
-        //     c++;
-        //     if (c > 5) {
-        //         c=0;
-        //     }
-        //     this.setState({count: c});
-        // },10000)
+
         let lanes = store.getAllLanes();
         let isRedo = store.isRedo();
         let isUndo = store.isUndo();
@@ -155,23 +148,31 @@ class App extends Component {
                     }
                 </header>
                 <div>
-                    <div className="Lane-name"  style={{borderBottom: "1px solid blue"}}>
+                    <div className="Lane-name"  style={{ borderBottom: "1px solid blue", height: "45px"}}>
 
                         <span className="Lane-name" style={{float: "left"}}>
-                            <Button onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
-                                    bsStyle="link"
-                                    title={"Add Lane"}><Glyphicon glyph="plus" />New Lane</Button>
-                            <Button onClick={() => this.setState({taskDetails:{name:"New Task",type: "task",id:uuid()}})}
-                                    bsStyle="link"
-                                    title={"Add Task"}><Glyphicon glyph="plus" />New Task</Button>
-                            <Button onClick={() => {
-                                        store.historyUndo();
-                                        this.setState({});
-                                    }} disabled={!isUndo} bsStyle="link" title={"Undo"}><Glyphicon glyph="arrow-left" />Undo</Button>
-                            <Button onClick={() => {
-                                        store.historyRedo();
-                                        this.setState({});
-                                    }} disabled={!isRedo} bsStyle="link" title={"Redo"}><Glyphicon glyph="arrow-right" />Redo</Button>
+                            <ButtonToolbar>
+                            <ButtonGroup>
+                                <Button style={{color: "blue"}}  bsSize="small"
+                                        onClick={() => this.setState({laneDetails:{name:"New Lane",id:uuid()}})}
+                                        title={"Add Lane"}><Glyphicon glyph="plus" />New Lane</Button>
+                                <Button style={{color: "blue"}}  bsSize="small"
+                                        onClick={() => this.setState({taskDetails:{name:"New Task",type: "task",id:uuid()}})}
+                                        title={"Add Task"}><Glyphicon glyph="plus" />New Task</Button>
+                            </ButtonGroup>
+                            <ButtonGroup>
+                                <Button bsStyle="link" bsSize="small" style={{color: "blue"}}
+                                        onClick={() => {
+                                            store.historyUndo();
+                                            this.setState({});
+                                        }} disabled={!isUndo} title={"Undo"}>Undo <Glyphicon glyph="arrow-left" /></Button>
+                                <Button bsStyle="link" style={{color: "blue"}}  bsSize="small"
+                                        onClick={() => {
+                                            store.historyRedo();
+                                            this.setState({});
+                                        }} disabled={!isRedo} title={"Redo"}><Glyphicon glyph="arrow-right" /></Button>
+                            </ButtonGroup>
+                            </ButtonToolbar>
                         </span>
                         <span className="Lane-name-right" style={{float:"right"}}>
                             <Button onClick={() => {

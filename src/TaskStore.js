@@ -66,7 +66,9 @@ class TaskStore {
             return
         } else {
             // modify existing lane
+            let tasks = this.getTasksByLane(lane.id);
             this.lanes[idx] = lane;
+            tasks.forEach(t => this.addTaskToLane(t.id,lane.id)); // apply new task props/
         }
     }
     setTask(task) {
@@ -114,6 +116,10 @@ class TaskStore {
     filterTasksByLane(laneId) {
         let tasks;
         let l = this.lanes.find(ll => ll.id == laneId);
+        let laneProps = l.props || {};
+        if ( laneProps.done === undefined) {
+            laneProps.done = "false";
+        }
         if (_.isEmpty(l)) {
             console.log("Can't find lane", laneId);
             return [];
