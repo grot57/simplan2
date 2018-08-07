@@ -154,6 +154,13 @@ class Task extends Component {
                 isDragInProgress = true;
             }
         }
+        let border = this.props.border || this.style.border;
+        if (task && task.border) {
+            border = task.border
+        }
+        if (dragInfo.sourceTaskId === task.id) {
+            border = "4px solid GREENYELLOW"
+        }
 
         //console.log("isDragging", isDragging, "dragInfo",dragInfo.sourceTaskId,"=?=",task.id);
         let {name,length,start} = task
@@ -177,6 +184,7 @@ class Task extends Component {
             width,
             background,
             color,
+            border,
             left,
             top: "0px",
             overflow: "hidden",
