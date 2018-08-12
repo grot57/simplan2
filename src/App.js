@@ -90,10 +90,12 @@ class App extends Component {
                     }}
                     onOk={(lane) => {
                         store.setLane(lane);
-                        this.setState({}); // force rendering
                         this.setState({laneDetails: null});
                     }}
-
+                    onDelete={(lane) => {
+                        store.deleteLane(lane.id);
+                        this.setState({laneDetails: null});
+                    }}
                 />
         )
     }
@@ -108,10 +110,12 @@ class App extends Component {
                     }}
                     onOk={(task) => {
                         store.setTask(task);
-                        this.setState({}); // force rendering
                         this.setState({taskDetails: null});
                     }}
-
+                    onDelete={(task) => {
+                        store.deleteTask(task.id);
+                        this.setState({taskDetails: null});
+                    }}
                 />
         )
     }

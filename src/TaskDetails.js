@@ -225,6 +225,8 @@ Those props can later be used by Lanes (controlled-props) to figure out which ta
                 </Modal.Body>
                 <Modal.Footer>
                     <div style={{textAlign: "left"}}>{"id: " + task.id}</div>
+                    <Button onClick={() => this.props.onDelete && this.props.onDelete(task) }
+                            bsStyle="danger"><Glyphicon glyph="remove" /> Delete</Button>
                     {this.state.isDup ? "" :
                         <Button onClick={() => {
                                     task.id = uuid();
@@ -232,6 +234,7 @@ Those props can later be used by Lanes (controlled-props) to figure out which ta
                                 }}
                                 bsStyle = "primary"> <Glyphicon glyph = "share" /> Duplicate </Button>
                     }
+
 
                     <Button onClick={() => this.props.onCancel && this.props.onCancel() }
                             bsStyle="primary"><Glyphicon glyph="remove" /> Cancel</Button>

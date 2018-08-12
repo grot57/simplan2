@@ -93,6 +93,19 @@ class TaskStore {
             this.tasks[idx] = task;
         }
     }
+    deleteTask(taskId) {
+        // based on task id, either update exiting task, or add a new one
+        // fix numeric attributes
+        this.historyPush();
+        _.remove(this.tasks,{id:taskId});
+    }
+
+    deleteLane(laneId) {
+        // based on task id, either update exiting task, or add a new one
+        // fix numeric attributes
+        this.historyPush();
+        _.remove(this.lanes,{id:laneId});
+    }
 
     addTaskToLane(taskId, laneId) {
         let t = this.tasks.find(tt => tt.id === taskId);
@@ -136,6 +149,10 @@ class TaskStore {
     // return only tasks belings to a lane.
     // make sure to return a "copy" of tasks
     getTasksByLane(laneId) {
+        console.log(this.dragInfo.targetPosition,"laneId",laneId)
+        if (this.dragInfo.sourceLaneId !== "711da2fe-0f15-49e2-a2f6-e1782b165cb9" && laneId === "711da2fe-0f15-49e2-a2f6-e1782b165cb9" && this.dragInfo.targetPosition === 12) {
+            this.dragInfo.sourceLaneId;
+        }
         let tasks = this.filterTasksByLane(laneId);
         tasks = this.orderTasks(laneId,tasks);
         return [...tasks];

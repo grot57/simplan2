@@ -170,6 +170,8 @@ When a task is assigned to a lane, it will automatically get the lanes props.`
                 </Modal.Body>
                 <Modal.Footer>
                     <div style={{textAlign: "left"}}>{"id: " + lane.id}</div>
+                    <Button onClick={() => this.props.onDelete && this.props.onDelete(lane) }
+                            bsStyle="danger"><Glyphicon glyph="remove" /> Delete</Button>
                     {this.state.isDup ? "" :
                         <Button onClick={() => {
                                     lane.id = uuid();
